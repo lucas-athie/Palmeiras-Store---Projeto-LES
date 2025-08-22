@@ -2,6 +2,7 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnSalvar = document.getElementById("btnSalvar");
     const btnCancelar = document.getElementById("btnCancelar");
     const btnExcluir = document.getElementById("btnExcluir");
+    const btnEnderecos = document.getElementById("btnEnderecos");
 
     const clienteEditando = JSON.parse(localStorage.getItem("clienteEditando"));
 
@@ -24,7 +25,7 @@ document.addEventListener("DOMContentLoaded", function () {
     btnSalvar.addEventListener("click", function () {
         const dadosAtualizados = {
             nome: document.getElementById("nome").value.trim(),
-            cpf: document.getElementById("cpf").value.trim(),
+            cpf: document.getElementById("cpf").value.trim().replace(/\D/g, ''),
             genero: document.getElementById("genero").value,
             senha: document.getElementById("senha").value,
             dataNascimento: document.getElementById("data-nascimento").value,
@@ -45,14 +46,18 @@ document.addEventListener("DOMContentLoaded", function () {
         };
 
         let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-        const index = clientes.findIndex(c => c.cpf === clienteEditando.cpf);
+        const index = clientes.findIndex(c => c.cpf.replace(/\D/g, '') === clienteEditando.cpf.replace(/\D/g, ''));
 
         if (index !== -1) {
             clientes[index] = dadosAtualizados;
             localStorage.setItem("clientes", JSON.stringify(clientes));
+
+            localStorage.setItem("clienteAtual", JSON.stringify(dadosAtualizados));
+
             localStorage.removeItem("clienteEditando");
             alert("Cliente atualizado com sucesso!");
-            window.location.href = "ListaClientes.html";
+
+            window.location.href = "CadastroEndereco.html";
         } else {
             alert("Erro: cliente não encontrado na lista.");
         }
@@ -62,12 +67,19 @@ document.addEventListener("DOMContentLoaded", function () {
         btnExcluir.addEventListener("click", function () {
             if (confirm("Tem certeza que deseja excluir este cliente?")) {
                 let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-                clientes = clientes.filter(c => c.cpf !== clienteEditando.cpf);
+                clientes = clientes.filter(c => c.cpf.replace(/\D/g, '') !== clienteEditando.cpf.replace(/\D/g, ''));
                 localStorage.setItem("clientes", JSON.stringify(clientes));
                 localStorage.removeItem("clienteEditando");
                 alert("Cliente excluído com sucesso!");
                 window.location.href = "ListaClientes.html";
             }
+        });
+    }
+
+    if (btnEnderecos) {
+        btnEnderecos.addEventListener("click", function () {
+            localStorage.setItem("clienteAtual", JSON.stringify(clienteEditando));
+            window.location.href = "CadastroEndereco.html";
         });
     }
 });

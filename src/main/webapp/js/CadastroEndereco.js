@@ -1,9 +1,15 @@
 const form = document.getElementById('form-endereco');
 const tabela = document.querySelector('#tabela-enderecos tbody');
-let enderecos = JSON.parse(localStorage.getItem('enderecos')) || [];
+
+const clienteAtual = JSON.parse(localStorage.getItem('clienteAtual'));
+const cpfPadronizado = clienteAtual?.cpf?.replace(/\D/g, '');
+
+let enderecos = (JSON.parse(localStorage.getItem('enderecos')) || [])
+    .filter(e => e.cpfCliente?.replace(/\D/g, '') === cpfPadronizado);
 
 document.getElementById('btnSalvar').addEventListener('click', () => {
     const dados = {
+        cpfCliente: cpfPadronizado,
         nome: document.getElementById('nome-endereco').value.trim(),
         tipoResidencia: document.getElementById('tipo-residencia').value,
         tipoLogradouro: document.getElementById('tipo-logradouro').value,
@@ -25,9 +31,13 @@ document.getElementById('btnSalvar').addEventListener('click', () => {
         return;
     }
 
+    let todosEnderecos = JSON.parse(localStorage.getItem('enderecos')) || [];
+    todosEnderecos.push(dados);
+    localStorage.setItem('enderecos', JSON.stringify(todosEnderecos));
+
     enderecos.push(dados);
-    salvarLocal();
     atualizarTabela();
+
     form.reset();
 });
 
@@ -53,7 +63,6 @@ function atualizarTabela() {
                 </select>
             </td>
             <td>
-                <button onclick="editarEndereco(${index})">Editar</button>
                 <button onclick="excluirEndereco(${index})">Excluir</button>
             </td>
         `;
@@ -64,39 +73,33 @@ function atualizarTabela() {
 
 function excluirEndereco(index) {
     if (confirm('Deseja realmente excluir este endereço?')) {
-        enderecos.splice(index, 1);
-        salvarLocal();
+        const enderecoRemovido = enderecos.splice(index, 1)[0];
+
+        let todosEnderecos = JSON.parse(localStorage.getItem('enderecos')) || [];
+        todosEnderecos = todosEnderecos.filter(e =>
+            !(e.cpfCliente?.replace(/\D/g, '') === enderecoRemovido.cpfCliente?.replace(/\D/g, '') &&
+              e.cep === enderecoRemovido.cep &&
+              e.numero === enderecoRemovido.numero)
+        );
+
+        localStorage.setItem('enderecos', JSON.stringify(todosEnderecos));
         atualizarTabela();
     }
 }
 
-function editarEndereco(index) {
-    const e = enderecos[index];
-    document.getElementById('nome-endereco').value = e.nome;
-    document.getElementById('tipo-residencia').value = e.tipoResidencia;
-    document.getElementById('tipo-logradouro').value = e.tipoLogradouro;
-    document.getElementById('logradouro').value = e.logradouro;
-    document.getElementById('numero').value = e.numero;
-    document.getElementById('bairro').value = e.bairro;
-    document.getElementById('cep').value = e.cep;
-    document.getElementById('cidade').value = e.cidade;
-    document.getElementById('estado').value = e.estado;
-    document.getElementById('pais').value = e.pais;
-    document.getElementById('tipo-uso').value = e.tipoUso;
-    document.getElementById('observacao').value = e.observacao;
-
-    enderecos.splice(index, 1);
-    salvarLocal();
-    atualizarTabela();
-}
-
 function alterarTipoUso(index, novoTipo) {
     enderecos[index].tipoUso = novoTipo;
-    salvarLocal();
-}
 
-function salvarLocal() {
-    localStorage.setItem('enderecos', JSON.stringify(enderecos));
+    let todosEnderecos = JSON.parse(localStorage.getItem('enderecos')) || [];
+    const idx = todosEnderecos.findIndex(e =>
+        e.cpfCliente?.replace(/\D/g, '') === enderecos[index].cpfCliente?.replace(/\D/g, '') &&
+        e.cep === enderecos[index].cep &&
+        e.numero === enderecos[index].numero
+    );
+    if (idx > -1) {
+        todosEnderecos[idx].tipoUso = novoTipo;
+        localStorage.setItem('enderecos', JSON.stringify(todosEnderecos));
+    }
 }
 
 atualizarTabela();

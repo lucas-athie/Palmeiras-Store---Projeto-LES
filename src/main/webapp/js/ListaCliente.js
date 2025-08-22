@@ -17,7 +17,7 @@ document.addEventListener("DOMContentLoaded", function () {
             <td>${cliente.telefone}</td>
             <td>${cliente.ativo !== false ? "Ativo" : "Inativo"}</td>
             <td>
-                <button onclick='editarCliente(${JSON.stringify(cliente)})'>Editar</button>
+                <button onclick='editarCliente("${cliente.cpf}")'>Editar</button>
                 <button onclick='excluirCliente("${cliente.cpf}")'>Excluir</button>
                 <button onclick='alternarStatus("${cliente.cpf}")'>
                     ${cliente.ativo !== false ? "Inativar" : "Ativar"}
@@ -29,23 +29,31 @@ document.addEventListener("DOMContentLoaded", function () {
     });
 });
 
-function editarCliente(cliente) {
-    localStorage.setItem("clienteEditando", JSON.stringify(cliente));
-    window.location.href = "EditarCliente.html";
+function editarCliente(cpf) {
+    const cpfPadronizado = cpf.replace(/\D/g, '');
+    const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+    const cliente = clientes.find(c => c.cpf.replace(/\D/g, '') === cpfPadronizado);
+
+    if (cliente) {
+        localStorage.setItem("clienteEditando", JSON.stringify(cliente));
+        window.location.href = "EditarCliente.html";
+    }
 }
 
 function excluirCliente(cpf) {
+    const cpfPadronizado = cpf.replace(/\D/g, '');
     if (confirm("Tem certeza que deseja excluir este cliente?")) {
         let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-        clientes = clientes.filter(c => c.cpf !== cpf);
+        clientes = clientes.filter(c => c.cpf.replace(/\D/g, '') !== cpfPadronizado);
         localStorage.setItem("clientes", JSON.stringify(clientes));
         location.reload();
     }
 }
 
 function alternarStatus(cpf) {
+    const cpfPadronizado = cpf.replace(/\D/g, '');
     let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-    const index = clientes.findIndex(c => c.cpf === cpf);
+    const index = clientes.findIndex(c => c.cpf.replace(/\D/g, '') === cpfPadronizado);
 
     if (index !== -1) {
         clientes[index].ativo = !(clientes[index].ativo !== false);

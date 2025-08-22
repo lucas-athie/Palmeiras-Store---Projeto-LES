@@ -2,9 +2,11 @@ document.addEventListener("DOMContentLoaded", function () {
     const btnSalvar = document.getElementById("btnSalvar");
 
     btnSalvar.addEventListener("click", function () {
+        const cpfFormatado = document.getElementById("cpf").value.trim().replace(/\D/g, '');
+
         const dados = {
             nome: document.getElementById("nome").value.trim(),
-            cpf: document.getElementById("cpf").value.trim(),
+            cpf: cpfFormatado,
             genero: document.getElementById("genero").value,
             senha: document.getElementById("senha").value,
             confirmarSenha: document.getElementById("confirmar-senha").value,
@@ -45,6 +47,7 @@ document.addEventListener("DOMContentLoaded", function () {
         localStorage.setItem("clienteAtual", JSON.stringify(dados));
 
         const enderecoPadrao = {
+            cpfCliente: cpfFormatado,
             nome: "Endereço Principal",
             tipoResidencia: dados.tipoEndereco,
             tipoLogradouro: dados.tipoLogradouro,
