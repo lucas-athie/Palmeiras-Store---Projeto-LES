@@ -1,0 +1,259 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0) 60%),
+        url('../img/Fundo.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+    color: #333;
+}
+
+header {
+    background-color: #006437;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+
+header h1 {
+    margin: 0;
+    font-family: Arial, sans-serif;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+nav a:hover {
+    text-decoration: underline;
+    border-color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+nav a[aria-current="page"] {
+    border-color: yellow;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.logo {
+    height: 50px;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+main {
+    display: flex;
+    justify-content: center;
+    padding: 20px;
+}
+
+#form-cliente {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 20px;
+    max-width: 900px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+#form-cliente label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#form-cliente input,
+#form-cliente select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+h2 {
+    grid-column: span 2;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: 2px solid #2e7d32;
+    border-radius: 4px;
+    cursor: pointer;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 14px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+    border-color: #1b5e20;
+}
+
+.form-group.full-width.buttons-group {
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 10px;
+    width: 90%;
+    margin: 0 auto;
+}
+
+.form-group.full-width.buttons-group button {
+    flex: 1 1 calc(25% - 10px);
+    min-width: 100px;
+}
+
+#btnSalvar {
+    background-color: #2e7d32;
+    border-color: #1b5e20;
+}
+#btnSalvar:hover {
+    background-color: #1b5e20;
+}
+
+#btnExcluir {
+    background-color: #c62828;
+    border-color: #8e0000;
+}
+#btnExcluir:hover {
+    background-color: #8e0000;
+}
+
+#form-cliente button[href],
+#form-cliente button[onclick] {
+    background-color: #1565c0;
+    border: 2px solid #0d47a1;
+}
+#form-cliente button[href]:hover,
+#form-cliente button[onclick]:hover {
+    background-color: #0d47a1;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+table th, table td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+table th {
+    background-color: #006437;
+    color: white;
+}
+
+table tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+table button {
+    background-color: #ff9800;
+    color: white;
+    padding: 5px 10px;
+    font-size: 12px;
+    border: 2px solid #e68900;
+    border-radius: 4px;
+    cursor: pointer;
+}
+table button:hover {
+    background-color: #e68900;
+    border-color: #cc7700;
+}
+
+.menu-principal {
+    font-size: 18px;
+    padding: 5px 0;
+}
+
+nav ul li {
+    position: relative;
+}
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #006437;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+.submenu li a {
+    display: block;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+.submenu li a:hover {
+    background-color: #004d29;
+    border-color: white;
+}
+
+nav ul li:hover .submenu {
+    display: block;
+}
+
+@media (max-width: 600px) {
+    #form-cliente {
+        grid-template-columns: 1fr;
+    }
+    .form-group.full-width.buttons-group {
+        flex-direction: column;
+        width: 100%;
+    }
+    .form-group.full-width.buttons-group button {
+        flex: 1 1 100%;
+    }
+}

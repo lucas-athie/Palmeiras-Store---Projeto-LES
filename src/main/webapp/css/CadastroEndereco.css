@@ -1,0 +1,233 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0) 60%),
+        url('../img/Fundo.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+    color: #333;
+}
+
+header {
+    background-color: #006437;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 20px;
+}
+
+header h1 {
+    margin: 0;
+}
+
+nav ul {
+    list-style: none;
+    display: flex;
+    gap: 15px;
+    margin: 0;
+    padding: 0;
+}
+
+nav a {
+    color: white;
+    text-decoration: none;
+    font-weight: bold;
+    padding: 6px 12px;
+    border: 2px solid transparent;
+    border-radius: 6px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+nav a:hover {
+    text-decoration: underline;
+    border-color: white;
+    background-color: rgba(255, 255, 255, 0.1);
+}
+
+nav a[aria-current="page"] {
+    border-color: yellow;
+    background-color: rgba(255, 255, 255, 0.2);
+}
+
+.logo {
+    height: 50px;
+}
+
+.header-left {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+main {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 20px;
+}
+
+#form-endereco {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 15px 20px;
+    max-width: 1000px;
+    background-color: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    margin-bottom: 30px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+#form-endereco label {
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+#form-endereco input,
+#form-endereco select {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    font-size: 14px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.full-width {
+    grid-column: span 2;
+}
+
+h2, h3 {
+    grid-column: span 2;
+    text-align: center;
+    margin-bottom: 10px;
+}
+
+/* ======== BOTÕES ======== */
+button {
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    border: 2px solid #2e7d32;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background 0.3s, border-color 0.3s;
+}
+
+button:hover {
+    background-color: #45a049;
+    border-color: #1b5e20;
+}
+
+#btnSalvar {
+    background-color: #2e7d32;
+    border-color: #1b5e20;
+}
+#btnSalvar:hover {
+    background-color: #1b5e20;
+}
+
+.btn-editar {
+    background-color: #1565c0;
+    border-color: #0d47a1;
+}
+.btn-editar:hover {
+    background-color: #0d47a1;
+}
+
+.btn-excluir {
+    background-color: #c62828;
+    border-color: #8e0000;
+}
+.btn-excluir:hover {
+    background-color: #8e0000;
+}
+
+#tabela-enderecos {
+    width: 100%;
+    max-width: 1000px;
+    border-collapse: collapse;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    overflow: hidden;
+    box-shadow: 0 0 10px rgba(0,0,0,0.1);
+}
+
+#tabela-enderecos th, #tabela-enderecos td {
+    border: 1px solid #ccc;
+    padding: 10px;
+    text-align: left;
+}
+
+#tabela-enderecos th {
+    background-color: #006437;
+    color: white;
+}
+
+#tabela-enderecos tr:nth-child(even) {
+    background-color: #f2f2f2;
+}
+
+#tabela-enderecos button {
+    padding: 5px 10px;
+    font-size: 12px;
+}
+
+.menu-principal {
+    font-size: 18px;
+    padding: 5px 0;
+}
+
+nav ul li {
+    position: relative;
+}
+
+.submenu {
+    position: absolute;
+    top: 100%;
+    left: 0;
+    background-color: #006437;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: none;
+    z-index: 10;
+    border-radius: 4px;
+}
+
+.submenu li a {
+    display: block;
+    padding: 8px 12px;
+    font-size: 14px;
+    color: white;
+    text-decoration: none;
+    border: 2px solid transparent;
+    border-radius: 4px;
+    transition: border-color 0.3s, background-color 0.3s;
+}
+
+.submenu li a:hover {
+    background-color: #004d29;
+    border-color: white;
+}
+
+nav ul li:hover .submenu {
+    display: block;
+}
+
+@media (max-width: 600px) {
+    #form-endereco {
+        grid-template-columns: 1fr;
+    }
+    .full-width {
+        grid-column: span 1;
+    }
+}
