@@ -1,32 +1,50 @@
 document.addEventListener("DOMContentLoaded", function () {
     const tabela = document.getElementById("tabela-clientes");
-    const clientes = JSON.parse(localStorage.getItem("clientes")) || [];
+    const filtro = document.getElementById("filtro");
+    let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
 
-    if (clientes.length === 0) {
-        tabela.innerHTML = `<tr><td colspan="7">Nenhum cliente cadastrado.</td></tr>`;
-        return;
+    function renderTabela(lista) {
+        tabela.innerHTML = "";
+        if (lista.length === 0) {
+            tabela.innerHTML = `<tr><td colspan="7">Nenhum cliente encontrado.</td></tr>`;
+            return;
+        }
+
+        lista.forEach((cliente) => {
+            const tr = document.createElement("tr");
+            tr.innerHTML = `
+                <td>${cliente.nome}</td>
+                <td>${cliente.cpf}</td>
+                <td>${cliente.email}</td>
+                <td>${cliente.telefone}</td>
+                <td>${cliente.ativo !== false ? "Ativo" : "Inativo"}</td>
+                <td>
+                    <button onclick='editarCliente("${cliente.cpf}")'>Editar</button>
+                    <button onclick='excluirCliente("${cliente.cpf}")'>Excluir</button>
+                    <button onclick='alternarStatus("${cliente.cpf}")'>
+                        ${cliente.ativo !== false ? "Inativar" : "Ativar"}
+                    </button>
+                </td>
+            `;
+            tabela.appendChild(tr);
+        });
     }
 
-    clientes.forEach((cliente) => {
-        const tr = document.createElement("tr");
+    if (filtro) {
+        filtro.addEventListener("input", () => {
+            const termo = filtro.value.toLowerCase();
+            const filtrados = clientes.filter(cliente =>
+                Object.entries(cliente)
+                    .filter(([chave]) => chave !== "senha") 
+                    .some(([_, valor]) =>
+                        String(valor).toLowerCase().includes(termo)
+                    )
+            );
+            renderTabela(filtrados);
+        });
+    }
 
-        tr.innerHTML = `
-            <td>${cliente.nome}</td>
-            <td>${cliente.cpf}</td>
-            <td>${cliente.email}</td>
-            <td>${cliente.telefone}</td>
-            <td>${cliente.ativo !== false ? "Ativo" : "Inativo"}</td>
-            <td>
-                <button onclick='editarCliente("${cliente.cpf}")'>Editar</button>
-                <button onclick='excluirCliente("${cliente.cpf}")'>Excluir</button>
-                <button onclick='alternarStatus("${cliente.cpf}")'>
-                    ${cliente.ativo !== false ? "Inativar" : "Ativar"}
-                </button>
-            </td>
-        `;
-
-        tabela.appendChild(tr);
-    });
+    renderTabela(clientes);
 });
 
 function editarCliente(cpf) {

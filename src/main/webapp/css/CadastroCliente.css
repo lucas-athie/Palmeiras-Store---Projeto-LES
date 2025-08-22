@@ -257,3 +257,36 @@ nav ul li:hover .submenu {
         flex: 1 1 100%;
     }
 }
+
+
+    #filtro {
+        display: block;
+        width: 100%;
+        max-width: 400px;
+        padding: 10px 12px;
+        margin: 0 0 15px 0;
+        font-size: 16px;
+        border: 2px solid #ccc;
+        border-radius: 6px;
+        outline: none;
+        transition: all 0.2s ease-in-out;
+    }
+
+    #filtro:focus {
+        border-color: #006400;
+        box-shadow: 0 0 5px rgba(0, 100, 0, 0.4);
+    }
+
+    label[for="filtro"] {
+        font-weight: bold;
+        display: block;
+        margin-bottom: 5px;
+        color: #333;
+    }
+
+    @media (max-width: 600px) {
+        #filtro {
+            max-width: 100%;
+            font-size: 14px;
+        }
+    }
