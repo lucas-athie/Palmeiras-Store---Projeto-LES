@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cadastro de Cartões</title>
+    <link rel="stylesheet" href="../css/CadastroCartao.css">
+</head>
+<body>
+
+<header>
+    <div class="header-left">
+        <h1>Palmeiras Store</h1>
+        <nav aria-label="Seção do sistema">
+            <ul>
+                <li><a href="ListaClientes.html" class="menu-principal">Clientes</a></li>
+                <li>
+                    <a href="#admin" id="tab-admin" class="menu-principal">Admin</a>
+                    <ul class="submenu">
+                        <li><a href="ListaClientes.html">Lista Clientes</a></li>
+                        <li><a href="CadastroEndereco.html">Cadastro Endereços</a></li>
+                        <li><a href="CadastroCartao.html">Cadastro Cartões</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
+</header>
+
+<main>
+    <section id="cartao">
+        <h2>Cadastro de Cartão de Crédito</h2>
+
+        <form id="form-cartao">
+            <div class="form-group full-width">
+                <label for="numero-cartao">Número do Cartão:</label>
+                <input type="text" id="numero-cartao" name="numero-cartao" placeholder="Ex: 1234 5678 9012 3456" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label for="nome-cartao">Nome Impresso no Cartão:</label>
+                <input type="text" id="nome-cartao" name="nome-cartao" placeholder="Ex: JOÃO DA SILVA" required>
+            </div>
+
+            <div class="form-group">
+                <label for="bandeira-cartao">Bandeira:</label>
+                <select id="bandeira-cartao" name="bandeira-cartao" required>
+                    <option value="">Selecione</option>
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">Mastercard</option>
+                    <option value="elo">Elo</option>
+                    <option value="amex">American Express</option>
+                    <option value="hipercard">Hipercard</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="codigo-seguranca">Código de Segurança:</label>
+                <input type="text" id="codigo-seguranca" name="codigo-seguranca" placeholder="Ex: 123" maxlength="4" required>
+            </div>
+
+            <div class="form-group full-width">
+                <label>
+                    <input type="checkbox" id="preferencial"> Definir como cartão preferencial
+                </label>
+            </div>
+
+            <div class="form-group full-width buttons-group">
+                <button type="button" id="btnSalvarCartao">Salvar Cartão</button>
+            </div>
+        </form>
+
+        <h3>Cartões Cadastrados</h3>
+        <table id="tabela-cartoes">
+            <thead>
+                <tr>
+                    <th>Número</th>
+                    <th>Nome</th>
+                    <th>Bandeira</th>
+                    <th>Preferencial</th>
+                    <th>Ações</th>
+                </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+    </section>
+</main>
+
+<script src="../js/CadastroCartao.js"></script>
+</body>
+</html>
