@@ -13,13 +13,22 @@
         <h1>Palmeiras Store</h1>
         <nav aria-label="Seção do sistema">
             <ul>
-                <li><a href="ListaClientes.html" class="menu-principal">Clientes</a></li>
+                <!-- Aba Cliente -->
                 <li>
-                    <a href="#admin" id="tab-admin" class="menu-principal">Admin</a>
+                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
                     <ul class="submenu">
-                        <li><a href="ListaClientes.html">Lista Clientes</a></li>
-                        <li><a href="CadastroEndereco.html">Cadastro Endereços</a></li>
-                        <li><a href="CadastroCartao.html">Cadastro Cartões</a></li>
+                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
+                        <li><a href="CadastroCliente.html">Cadastro</a></li>
+                        <li><a href="EditarCliente.html">Editar</a></li>
+                        <li><a href="CadastroEndereco.html">Endereço</a></li>
+                    </ul>
+                </li>
+
+                <!-- Aba Admin -->
+                <li>
+                    <a href="#" id="tab-admin" class="menu-principal">Admin</a>
+                    <ul class="submenu">
+                        <li><a href="ListaClientes.html">Lista</a></li>
                     </ul>
                 </li>
             </ul>
