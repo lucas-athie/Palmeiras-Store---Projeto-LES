@@ -1,10 +1,19 @@
-document.addEventListener("DOMContentLoaded", function () {
+document.addEventListener("DOMContentLoaded", async function () {
     const btnSalvar = document.getElementById("btnSalvar");
     const btnCancelar = document.getElementById("btnCancelar");
     const btnExcluir = document.getElementById("btnExcluir");
     const btnEnderecos = document.getElementById("btnEnderecos");
+    const API_BASE = "http://localhost:5500/api"; // ajuste conforme o back
 
-    const clienteEditando = JSON.parse(localStorage.getItem("clienteEditando"));
+    let clienteEditando = JSON.parse(localStorage.getItem("clienteEditando"));
+
+    if (!clienteEditando) {
+        const clienteAtual = JSON.parse(localStorage.getItem("clienteAtual"));
+        if (clienteAtual) {
+            clienteEditando = clienteAtual;
+            localStorage.setItem("clienteEditando", JSON.stringify(clienteAtual));
+        }
+    }
 
     if (!clienteEditando) {
         alert("Nenhum cliente selecionado para edição.");
@@ -12,17 +21,28 @@ document.addEventListener("DOMContentLoaded", function () {
         return;
     }
 
-    for (let campo in clienteEditando) {
-        if (document.getElementById(campo)) {
-            document.getElementById(campo).value = clienteEditando[campo];
+    const cpfCliente = clienteEditando.cpf?.replace(/\D/g, '');
+
+    try {
+        const res = await fetch(`${API_BASE}/clientes/${cpfCliente}`);
+        if (!res.ok) throw new Error("Erro ao buscar cliente");
+        const clienteBack = await res.json();
+
+        for (let campo in clienteBack) {
+            if (document.getElementById(campo)) {
+                document.getElementById(campo).value = clienteBack[campo];
+            }
         }
+        if (document.getElementById("ativo")) {
+            document.getElementById("ativo").value = clienteBack.ativo !== false ? "true" : "false";
+        }
+    } catch (err) {
+        console.error(err);
+        alert("Erro ao carregar dados do cliente.");
+        return;
     }
 
-    if (document.getElementById("ativo")) {
-        document.getElementById("ativo").value = clienteEditando.ativo !== false ? "true" : "false";
-    }
-
-    btnSalvar.addEventListener("click", function () {
+    btnSalvar.addEventListener("click", async function () {
         const dadosAtualizados = {
             nome: document.getElementById("nome").value.trim(),
             cpf: document.getElementById("cpf").value.trim().replace(/\D/g, ''),
@@ -45,33 +65,39 @@ document.addEventListener("DOMContentLoaded", function () {
             ativo: document.getElementById("ativo").value === "true"
         };
 
-        let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-        const index = clientes.findIndex(c => c.cpf.replace(/\D/g, '') === clienteEditando.cpf.replace(/\D/g, ''));
-
-        if (index !== -1) {
-            clientes[index] = dadosAtualizados;
-            localStorage.setItem("clientes", JSON.stringify(clientes));
+        try {
+            const res = await fetch(`${API_BASE}/clientes/${cpfCliente}`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dadosAtualizados)
+            });
+            if (!res.ok) throw new Error("Erro ao salvar alterações");
 
             localStorage.setItem("clienteAtual", JSON.stringify(dadosAtualizados));
-
             localStorage.removeItem("clienteEditando");
-            alert("Cliente atualizado com sucesso!");
 
+            alert("Cliente atualizado com sucesso!");
             window.location.href = "CadastroEndereco.html";
-        } else {
-            alert("Erro: cliente não encontrado na lista.");
+        } catch (err) {
+            console.error(err);
+            alert("Erro ao salvar cliente.");
         }
     });
 
     if (btnExcluir) {
-        btnExcluir.addEventListener("click", function () {
-            if (confirm("Tem certeza que deseja excluir este cliente?")) {
-                let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-                clientes = clientes.filter(c => c.cpf.replace(/\D/g, '') !== clienteEditando.cpf.replace(/\D/g, ''));
-                localStorage.setItem("clientes", JSON.stringify(clientes));
+        btnExcluir.addEventListener("click", async function () {
+            if (!confirm("Tem certeza que deseja excluir este cliente?")) return;
+            try {
+                const res = await fetch(`${API_BASE}/clientes/${cpfCliente}`, {
+                    method: "DELETE"
+                });
+                if (!res.ok) throw new Error("Erro ao excluir cliente");
                 localStorage.removeItem("clienteEditando");
                 alert("Cliente excluído com sucesso!");
                 window.location.href = "ListaClientes.html";
+            } catch (err) {
+                console.error(err);
+                alert("Erro ao excluir cliente.");
             }
         });
     }

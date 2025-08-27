@@ -1,7 +1,9 @@
 document.addEventListener("DOMContentLoaded", function () {
     const btnSalvar = document.getElementById("btnSalvar");
 
-    btnSalvar.addEventListener("click", function () {
+    const API_BASE = "http://localhost:5500/api"; // ajuste para o back depois
+
+    btnSalvar.addEventListener("click", async function () {
         const cpfFormatado = document.getElementById("cpf").value.trim().replace(/\D/g, '');
 
         const dados = {
@@ -37,36 +39,49 @@ document.addEventListener("DOMContentLoaded", function () {
             alert("As senhas não coincidem!");
             return;
         }
-
         delete dados.confirmarSenha;
 
-        let clientes = JSON.parse(localStorage.getItem("clientes")) || [];
-        clientes.push(dados);
-        localStorage.setItem("clientes", JSON.stringify(clientes));
+        try {
+            const resCliente = await fetch(`${API_BASE}/clientes`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(dados)
+            });
 
-        localStorage.setItem("clienteAtual", JSON.stringify(dados));
+            if (!resCliente.ok) throw new Error("Erro ao cadastrar cliente");
 
-        const enderecoPadrao = {
-            cpfCliente: cpfFormatado,
-            nome: "Endereço Principal",
-            tipoResidencia: dados.tipoEndereco,
-            tipoLogradouro: dados.tipoLogradouro,
-            logradouro: dados.logradouro,
-            numero: dados.numero,
-            bairro: dados.bairro,
-            cep: dados.cep,
-            cidade: dados.cidade,
-            estado: dados.estado,
-            pais: dados.pais,
-            tipoUso: "ambos",
-            observacao: dados.observacao
-        };
+            localStorage.setItem("clienteAtual", JSON.stringify(dados));
 
-        let enderecos = JSON.parse(localStorage.getItem("enderecos")) || [];
-        enderecos.push(enderecoPadrao);
-        localStorage.setItem("enderecos", JSON.stringify(enderecos));
+            const enderecoPadrao = {
+                cpfCliente: cpfFormatado,
+                nome: "Endereço Principal",
+                tipoResidencia: dados.tipoEndereco,
+                tipoLogradouro: dados.tipoLogradouro,
+                logradouro: dados.logradouro,
+                numero: dados.numero,
+                bairro: dados.bairro,
+                cep: dados.cep,
+                cidade: dados.cidade,
+                estado: dados.estado,
+                pais: dados.pais,
+                tipoUso: "ambos",
+                observacao: dados.observacao
+            };
 
-        alert("Cliente e endereço cadastrados com sucesso!");
-        window.location.href = "ListaClientes.html";
+            const resEndereco = await fetch(`${API_BASE}/clientes/${cpfFormatado}/enderecos`, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(enderecoPadrao)
+            });
+
+            if (!resEndereco.ok) throw new Error("Erro ao cadastrar endereço padrão");
+
+            alert("Cliente e endereço cadastrados com sucesso!");
+            window.location.href = "ListaClientes.html";
+
+        } catch (err) {
+            console.error(err);
+            alert("Ocorreu um erro ao salvar o cliente.");
+        }
     });
 });
