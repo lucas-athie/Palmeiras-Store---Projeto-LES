@@ -1,31 +1,38 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Cadastro de Clientes</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
+    <link rel="stylesheet" href="../css/CadastroCliente.css" />
 </head>
 <body>
 
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
-        <nav aria-label="Cadastro">
+        <nav aria-label="Seção do sistema">
             <ul>
                 <li>
-                    <a href="#" id="tab-cliente" class="menu-principal">Cliente</a>
+                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
                     <ul class="submenu">
-                        <li><a href="CadastroCartao.html">Cartões</a></li>
+                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
                         <li><a href="CadastroCliente.html">Cadastro</a></li>
                         <li><a href="EditarCliente.html">Editar</a></li>
                         <li><a href="CadastroEndereco.html">Endereço</a></li>
+                        <li><a href="Transacao.html">Transação</a></li>
+                        <li><a href="Carrinho.html">Carrinho</a></li>
+                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
                     </ul>
                 </li>
+
                 <li>
                     <a href="#" id="tab-admin" class="menu-principal">Admin</a>
                     <ul class="submenu">
                         <li><a href="ListaClientes.html">Lista</a></li>
+                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
                     </ul>
                 </li>
             </ul>
@@ -36,22 +43,24 @@
 
 <main>
     <section id="cliente">
-        <h2>Cadastro</h2>
+        <h2>Cadastro Completo</h2>
 
         <form id="form-cliente">
+            <h3>Dados Pessoais</h3>
+
             <div class="form-group full-width">
                 <label for="nome">Nome Completo:</label>
-                <input type="text" id="nome" name="nome" placeholder="Digite o nome completo" required>
+                <input type="text" id="nome" placeholder="Digite o nome completo" required />
             </div>
 
             <div class="form-group">
                 <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" placeholder="Digite o CPF" maxlength="14" required>
+                <input type="text" id="cpf" maxlength="14" placeholder="000.000.000-00" required />
             </div>
 
             <div class="form-group">
                 <label for="genero">Gênero:</label>
-                <select id="genero" name="genero" required>
+                <select id="genero" required>
                     <option value="" disabled selected>Selecione</option>
                     <option value="masculino">Masculino</option>
                     <option value="feminino">Feminino</option>
@@ -61,22 +70,22 @@
 
             <div class="form-group">
                 <label for="senha">Senha:</label>
-                <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
+                <input type="password" id="senha" placeholder="Digite sua senha" required />
             </div>
 
             <div class="form-group">
                 <label for="confirmar-senha">Confirmar Senha:</label>
-                <input type="password" name="confirmar-senha" id="confirmar-senha" placeholder="Repita a senha" required>
+                <input type="password" id="confirmar-senha" placeholder="Repita a senha" required />
             </div>
 
             <div class="form-group">
                 <label for="data-nascimento">Data de Nascimento:</label>
-                <input type="date" name="data-nascimento" id="data-nascimento" required>
+                <input type="date" id="data-nascimento" required />
             </div>
 
             <div class="form-group">
                 <label for="tipo-telefone">Tipo de Telefone:</label>
-                <select name="tipo-telefone" id="tipo-telefone" required>
+                <select id="tipo-telefone" required>
                     <option value="">Selecione</option>
                     <option value="fixo">Fixo</option>
                     <option value="movel">Móvel</option>
@@ -85,17 +94,24 @@
 
             <div class="form-group">
                 <label for="telefone">Telefone (com DDD):</label>
-                <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" pattern="\(\d{2}\)\s?\d{4,5}-\d{4}" required>
+                <input type="tel" id="telefone" placeholder="(11) 99999-9999" required />
             </div>
 
             <div class="form-group full-width">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
+                <label for="email">E-mail:</label>
+                <input type="email" id="email" placeholder="seuemail@exemplo.com" required />
             </div>
 
+            <div class="form-group full-width">
+                <label for="obs">Observação:</label>
+                <input type="text" id="obs" placeholder="Digite a Observação" />
+            </div>
+
+            <h3>Endereço de Entrega</h3>
+
             <div class="form-group">
-                <label for="tipo-endereco">Tipo de Endereço:</label>
-                <select name="tipo-endereco" id="tipo-endereco" required>
+                <label for="entrega-tipo-endereco">Tipo de Endereço:</label>
+                <select id="entrega-tipo-endereco" required>
                     <option value="">Selecione</option>
                     <option value="casa">Casa</option>
                     <option value="apartamento">Apartamento</option>
@@ -104,8 +120,8 @@
             </div>
 
             <div class="form-group">
-                <label for="tipo-logradouro">Tipo de Logradouro:</label>
-                <select id="tipo-logradouro" name="tipo-logradouro" required>
+                <label for="entrega-tipo-logradouro">Tipo de Logradouro:</label>
+                <select id="entrega-tipo-logradouro" required>
                     <option value="">Selecione</option>
                     <option value="rua">Rua</option>
                     <option value="avenida">Avenida</option>
@@ -119,53 +135,138 @@
             </div>
 
             <div class="form-group full-width">
-                <label for="logradouro">Logradouro:</label>
-                <input type="text" id="logradouro" name="logradouro" placeholder="Digite o logradouro" required>
+                <label for="entrega-logradouro">Logradouro:</label>
+                <input type="text" id="entrega-logradouro" placeholder="Digite o logradouro" required />
             </div>
 
             <div class="form-group">
-                <label for="numero">Número:</label>
-                <input type="text" id="numero" name="numero" placeholder="Digite o número" required>
+                <label for="entrega-numero">Número:</label>
+                <input type="text" id="entrega-numero" placeholder="Digite o número" required />
             </div>
 
             <div class="form-group">
-                <label for="bairro">Bairro:</label>
-                <input type="text" id="bairro" name="bairro" placeholder="Digite o Bairro" required>
+                <label for="entrega-bairro">Bairro:</label>
+                <input type="text" id="entrega-bairro" placeholder="Digite o Bairro" required />
             </div>
 
             <div class="form-group">
-                <label for="cep">CEP:</label>
-                <input type="text" id="cep" name="cep" placeholder="00000-000" pattern="\d{5}-\d{3}" title="Digite o CEP no formato 00000-000" required>
+                <label for="entrega-cep">CEP:</label>
+                <input type="text" id="entrega-cep" placeholder="00000-000" required />
             </div>
 
             <div class="form-group">
-                <label for="cidade">Cidade:</label>
-                <input type="text" id="cidade" name="cidade" placeholder="Digite a cidade" required>
+                <label for="entrega-cidade">Cidade:</label>
+                <input type="text" id="entrega-cidade" placeholder="Digite a cidade" required />
             </div>
 
             <div class="form-group">
-                <label for="estado">Estado:</label>
-                <input type="text" id="estado" name="estado" placeholder="Digite o estado" required>
+                <label for="entrega-estado">Estado:</label>
+                <input type="text" id="entrega-estado" placeholder="Digite o estado" required />
             </div>
 
             <div class="form-group">
-                <label for="pais">País:</label>
-                <input type="text" id="pais" name="pais" placeholder="Digite o País" required>
+                <label for="entrega-pais">País:</label>
+                <input type="text" id="entrega-pais" placeholder="Digite o País" required />
+            </div>
+
+            <h3>Endereço de Cobrança</h3>
+
+            <div class="form-group">
+                <label for="cobranca-tipo-endereco">Tipo de Endereço:</label>
+                <select id="cobranca-tipo-endereco" required>
+                    <option value="">Selecione</option>
+                    <option value="casa">Casa</option>
+                    <option value="apartamento">Apartamento</option>
+                    <option value="condominio">Condomínio</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-tipo-logradouro">Tipo de Logradouro:</label>
+                <select id="cobranca-tipo-logradouro" required>
+                    <option value="">Selecione</option>
+                    <option value="rua">Rua</option>
+                    <option value="avenida">Avenida</option>
+                    <option value="travessa">Travessa</option>
+                    <option value="alameda">Alameda</option>
+                    <option value="rodovia">Rodovia</option>
+                    <option value="estrada">Estrada</option>
+                    <option value="praca">Praça</option>
+                    <option value="vicinal">Vicinal</option>
+                </select>
             </div>
 
             <div class="form-group full-width">
-                <label for="obs">Observação:</label>
-                <input type="text" id="obs" name="obs" placeholder="Digite a Observação">
+                <label for="cobranca-logradouro">Logradouro:</label>
+                <input type="text" id="cobranca-logradouro" placeholder="Digite o logradouro" required />
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-numero">Número:</label>
+                <input type="text" id="cobranca-numero" placeholder="Digite o número" required />
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-bairro">Bairro:</label>
+                <input type="text" id="cobranca-bairro" placeholder="Digite o Bairro" required />
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-cep">CEP:</label>
+                <input type="text" id="cobranca-cep" placeholder="00000-000" required />
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-cidade">Cidade:</label>
+                <input type="text" id="cobranca-cidade" placeholder="Digite a cidade" required />
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-estado">Estado:</label>
+                <input type="text" id="cobranca-estado" placeholder="Digite o estado" required />
+            </div>
+
+            <div class="form-group">
+                <label for="cobranca-pais">País:</label>
+                <input type="text" id="cobranca-pais" placeholder="Digite o País" required />
+            </div>
+
+            <h3>Cartão</h3>
+
+            <div class="form-group full-width">
+                <label for="numero-cartao">Número do Cartão:</label>
+                <input type="text" id="numero-cartao" placeholder="1234 5678 9012 3456" required />
             </div>
 
             <div class="form-group full-width">
-                <button type="button" id="btnSalvar">Salvar</button>
+                <label for="nome-cartao">Nome Impresso no Cartão:</label>
+                <input type="text" id="nome-cartao" placeholder="JOÃO DA SILVA" required />
+            </div>
+
+            <div class="form-group">
+                <label for="bandeira-cartao">Bandeira:</label>
+                <select id="bandeira-cartao" required>
+                    <option value="">Selecione</option>
+                    <option value="visa">Visa</option>
+                    <option value="mastercard">Mastercard</option>
+                    <option value="elo">Elo</option>
+                    <option value="amex">American Express</option>
+                    <option value="hipercard">Hipercard</option>
+                </select>
+            </div>
+
+            <div class="form-group">
+                <label for="codigo-seguranca">Código de Segurança:</label>
+                <input type="text" id="codigo-seguranca" maxlength="4" placeholder="123" required />
+            </div>
+
+            <div class="form-group full-width buttons-group">
+                <button type="button" id="btnSalvar">Cadastrar Tudo</button>
             </div>
         </form>
     </section>
 </main>
 
 <script src="../js/CadastroCliente.js"></script>
-
 </body>
 </html>

@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Finalizar Compra</title>
+  <link rel="stylesheet" href="../css/CadastroCliente.css"/>
+  <link rel="stylesheet" href="../css/FinalizarCompra.css"/>
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <h1>Palmeiras Store</h1>
+        <nav aria-label="Seção do sistema">
+            <ul>
+                <li>
+                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
+                    <ul class="submenu">
+                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
+                        <li><a href="CadastroCliente.html">Cadastro</a></li>
+                        <li><a href="EditarCliente.html">Editar</a></li>
+                        <li><a href="CadastroEndereco.html">Endereço</a></li>
+                        <li><a href="Transacao.html">Transação</a></li>
+                        <li><a href="Carrinho.html">Carrinho</a></li>
+                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#" id="tab-admin" class="menu-principal">Admin</a>
+                    <ul class="submenu">
+                        <li><a href="ListaClientes.html">Lista</a></li>
+                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
+</header>
+
+<main>
+  <section>
+    <h2 style="text-align:center; margin-bottom: 20px;">Finalizar Compra</h2>
+
+    <!-- Seleção de Endereço -->
+    <div class="form-group full-width">
+      <label for="endereco">Selecione o Endereço de Entrega:</label>
+      <select id="endereco" required>
+        <!-- Opções serão carregadas via JS -->
+      </select>
+    </div>
+
+    <!-- Seleção de Cartão -->
+    <div class="form-group full-width">
+      <label for="cartao">Selecione o Cartão para Pagamento:</label>
+      <select id="cartao" required>
+        <!-- Opções serão carregadas via JS -->
+      </select>
+    </div>
+
+    <!-- Cálculo de Frete -->
+    <div class="form-group">
+      <label for="cep">Calcular Frete (CEP):</label>
+      <input type="text" id="cep" placeholder="00000-000" required>
+    </div>
+    <div class="form-group">
+      <label>&nbsp;</label>
+      <button type="button" id="btnCalcularFrete">Calcular</button>
+    </div>
+
+    <!-- Resumo do Pedido -->
+    <h3 style="flex: 1 1 100%; margin-top: 20px;">Resumo do Pedido</h3>
+    <table id="tabela-resumo">
+      <thead>
+        <tr>
+          <th>Produto</th>
+          <th>Qtd</th>
+          <th>Preço</th>
+          <th>Subtotal</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Itens do carrinho via JS -->
+      </tbody>
+    </table>
+
+    <div class="resumo-valores">
+      <p>Subtotal: <span id="subtotal">R$ 0,00</span></p>
+      <p>Frete: <span id="valor-frete">R$ 0,00</span></p>
+      <p><strong>Total: <span id="total-geral">R$ 0,00</span></strong></p>
+    </div>
+
+    <!-- Botão Finalizar -->
+    <div class="buttons-group full-width" style="margin-top: 20px;">
+      <button type="button" id="btnConfirmarCompra">Confirmar Compra</button>
+    </div>
+  </section>
+</main>
+
+<script src="../js/FinalizarCompra.js"></script>
+</body>
+</html>

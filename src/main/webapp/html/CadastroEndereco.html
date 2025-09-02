@@ -11,21 +11,28 @@
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
-        <nav aria-label="Endereço">
+        <nav aria-label="Seção do sistema">
             <ul>
                 <li>
-                    <a href="#" id="tab-cliente" class="menu-principal">Cliente</a>
+                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
                     <ul class="submenu">
-                        <li><a href="CadastroCartao.html">Cartões</a></li>
+                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
                         <li><a href="CadastroCliente.html">Cadastro</a></li>
                         <li><a href="EditarCliente.html">Editar</a></li>
                         <li><a href="CadastroEndereco.html">Endereço</a></li>
+                        <li><a href="Transacao.html">Transação</a></li>
+                        <li><a href="Carrinho.html">Carrinho</a></li>
+                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
                     </ul>
                 </li>
+
                 <li>
                     <a href="#" id="tab-admin" class="menu-principal">Admin</a>
                     <ul class="submenu">
                         <li><a href="ListaClientes.html">Lista</a></li>
+                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
                     </ul>
                 </li>
             </ul>
@@ -87,7 +94,7 @@
 
             <div class="form-group">
                 <label for="cep">CEP:</label>
-                <input type="text" id="cep" name="cep" placeholder="00000-000" pattern="\d{5}-\d{3}" title="Digite o CEP no formato 00000-000" required>
+                <input type="text" id="cep" name="cep" placeholder="00000-000" pattern="\d{5}-\d{3}" required>
             </div>
 
             <div class="form-group">
@@ -142,6 +149,7 @@
                 </tr>
             </thead>
             <tbody>
+                <!-- preenchido pelo JS -->
             </tbody>
         </table>
     </section>

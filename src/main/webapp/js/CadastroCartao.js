@@ -11,18 +11,22 @@ document.addEventListener("DOMContentLoaded", function () {
     }
 
     const cpfCliente = clienteAtual.cpf?.replace(/\D/g, '');
-    const API_BASE = "http://localhost:5500/api"; // ajuste depois para o back
 
-    async function carregarCartoes() {
-        try {
-            const res = await fetch(`${API_BASE}/clientes/${cpfCliente}/cartoes`);
-            if (!res.ok) throw new Error("Erro ao buscar cartões");
-            const data = await res.json();
-            renderTabela(data);
-        } catch (err) {
-            console.error(err);
-            tabela.innerHTML = `<tr><td colspan="5">Erro ao carregar cartões.</td></tr>`;
-        }
+    function getCartoes() {
+        return JSON.parse(localStorage.getItem('cartoes') || "[]")
+            .filter(c => c.cpfCliente.replace(/\D/g, '') === cpfCliente);
+    }
+
+    function setCartoes(cartoesCliente) {
+        let todos = JSON.parse(localStorage.getItem('cartoes') || "[]");
+        todos = todos.filter(c => c.cpfCliente.replace(/\D/g, '') !== cpfCliente);
+        todos.push(...cartoesCliente);
+        localStorage.setItem('cartoes', JSON.stringify(todos));
+    }
+
+    function carregarCartoes() {
+        const cartoes = getCartoes();
+        renderTabela(cartoes);
     }
 
     function renderTabela(cartoes) {
@@ -47,8 +51,10 @@ document.addEventListener("DOMContentLoaded", function () {
         });
     }
 
-    btnSalvar.addEventListener('click', async () => {
+    btnSalvar.addEventListener('click', () => {
         const dados = {
+            id: Date.now().toString(),
+            cpfCliente: cpfCliente,
             numero: document.getElementById('numero-cartao').value.trim(),
             nome: document.getElementById('nome-cartao').value.trim(),
             bandeira: document.getElementById('bandeira-cartao').value,
@@ -61,46 +67,32 @@ document.addEventListener("DOMContentLoaded", function () {
             return;
         }
 
-        try {
-            const res = await fetch(`${API_BASE}/clientes/${cpfCliente}/cartoes`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dados)
-            });
-            if (!res.ok) throw new Error("Erro ao salvar cartão");
-            await carregarCartoes();
-            form.reset();
-        } catch (err) {
-            console.error(err);
-            alert("Erro ao salvar cartão.");
+        let cartoesCliente = getCartoes();
+
+        if (dados.preferencial) {
+            cartoesCliente.forEach(c => c.preferencial = false);
         }
+
+        cartoesCliente.push(dados);
+        setCartoes(cartoesCliente);
+
+        carregarCartoes();
+        form.reset();
     });
 
-    window.excluirCartao = async function (idCartao) {
+    window.excluirCartao = function (idCartao) {
         if (!confirm("Deseja realmente excluir este cartão?")) return;
-        try {
-            const res = await fetch(`${API_BASE}/clientes/${cpfCliente}/cartoes/${idCartao}`, {
-                method: "DELETE"
-            });
-            if (!res.ok) throw new Error("Erro ao excluir");
-            await carregarCartoes();
-        } catch (err) {
-            console.error(err);
-            alert("Erro ao excluir cartão.");
-        }
+        let cartoesCliente = getCartoes();
+        cartoesCliente = cartoesCliente.filter(c => c.id !== idCartao);
+        setCartoes(cartoesCliente);
+        carregarCartoes();
     };
 
-    window.definirPreferencial = async function (idCartao) {
-        try {
-            const res = await fetch(`${API_BASE}/clientes/${cpfCliente}/cartoes/${idCartao}/preferencial`, {
-                method: "PATCH"
-            });
-            if (!res.ok) throw new Error("Erro ao atualizar preferencial");
-            await carregarCartoes();
-        } catch (err) {
-            console.error(err);
-            alert("Erro ao atualizar preferencial.");
-        }
+    window.definirPreferencial = function (idCartao) {
+        let cartoesCliente = getCartoes();
+        cartoesCliente.forEach(c => c.preferencial = (c.id === idCartao));
+        setCartoes(cartoesCliente);
+        carregarCartoes();
     };
 
     carregarCartoes();

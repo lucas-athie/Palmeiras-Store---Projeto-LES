@@ -1,12 +1,10 @@
 document.addEventListener("DOMContentLoaded", function () {
     const btnSalvar = document.getElementById("btnSalvar");
 
-    const API_BASE = "http://localhost:5500/api"; // ajuste para o back depois
-
-    btnSalvar.addEventListener("click", async function () {
+    btnSalvar.addEventListener("click", function () {
         const cpfFormatado = document.getElementById("cpf").value.trim().replace(/\D/g, '');
 
-        const dados = {
+        const cliente = {
             nome: document.getElementById("nome").value.trim(),
             cpf: cpfFormatado,
             genero: document.getElementById("genero").value,
@@ -16,72 +14,88 @@ document.addEventListener("DOMContentLoaded", function () {
             tipoTelefone: document.getElementById("tipo-telefone").value,
             telefone: document.getElementById("telefone").value.trim(),
             email: document.getElementById("email").value.trim(),
-            tipoEndereco: document.getElementById("tipo-endereco").value,
-            tipoLogradouro: document.getElementById("tipo-logradouro").value,
-            logradouro: document.getElementById("logradouro").value.trim(),
-            numero: document.getElementById("numero").value.trim(),
-            bairro: document.getElementById("bairro").value.trim(),
-            cep: document.getElementById("cep").value.trim(),
-            cidade: document.getElementById("cidade").value.trim(),
-            estado: document.getElementById("estado").value.trim(),
-            pais: document.getElementById("pais").value.trim(),
             observacao: document.getElementById("obs").value.trim()
         };
 
-        for (let campo in dados) {
-            if (campo !== "observacao" && campo !== "confirmarSenha" && dados[campo] === "") {
+        // Validação básica
+        for (let campo in cliente) {
+            if (campo !== "observacao" && campo !== "confirmarSenha" && cliente[campo] === "") {
                 alert(`O campo "${campo}" é obrigatório!`);
                 return;
             }
         }
-
-        if (dados.senha !== dados.confirmarSenha) {
+        if (cliente.senha !== cliente.confirmarSenha) {
             alert("As senhas não coincidem!");
             return;
         }
-        delete dados.confirmarSenha;
+        delete cliente.confirmarSenha;
 
-        try {
-            const resCliente = await fetch(`${API_BASE}/clientes`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(dados)
-            });
+        // Endereço de entrega
+        const enderecoEntrega = {
+            id: Date.now() + "_entrega",
+            cpfCliente: cpfFormatado,
+            nome: "Endereço de Entrega",
+            tipoResidencia: document.getElementById("entrega-tipo-endereco").value,
+            tipoLogradouro: document.getElementById("entrega-tipo-logradouro").value,
+            logradouro: document.getElementById("entrega-logradouro").value.trim(),
+            numero: document.getElementById("entrega-numero").value.trim(),
+            bairro: document.getElementById("entrega-bairro").value.trim(),
+            cep: document.getElementById("entrega-cep").value.trim(),
+            cidade: document.getElementById("entrega-cidade").value.trim(),
+            estado: document.getElementById("entrega-estado").value.trim(),
+            pais: document.getElementById("entrega-pais").value.trim(),
+            tipoUso: "entrega",
+            observacao: ""
+        };
 
-            if (!resCliente.ok) throw new Error("Erro ao cadastrar cliente");
+        // Endereço de cobrança
+        const enderecoCobranca = {
+            id: Date.now() + "_cobranca",
+            cpfCliente: cpfFormatado,
+            nome: "Endereço de Cobrança",
+            tipoResidencia: document.getElementById("cobranca-tipo-endereco").value,
+            tipoLogradouro: document.getElementById("cobranca-tipo-logradouro").value,
+            logradouro: document.getElementById("cobranca-logradouro").value.trim(),
+            numero: document.getElementById("cobranca-numero").value.trim(),
+            bairro: document.getElementById("cobranca-bairro").value.trim(),
+            cep: document.getElementById("cobranca-cep").value.trim(),
+            cidade: document.getElementById("cobranca-cidade").value.trim(),
+            estado: document.getElementById("cobranca-estado").value.trim(),
+            pais: document.getElementById("cobranca-pais").value.trim(),
+            tipoUso: "cobranca",
+            observacao: ""
+        };
 
-            localStorage.setItem("clienteAtual", JSON.stringify(dados));
+        // Cartão
+        const cartao = {
+            id: Date.now() + "_cartao",
+            cpfCliente: cpfFormatado,
+            numero: document.getElementById("numero-cartao").value.trim(),
+            nome: document.getElementById("nome-cartao").value.trim(),
+            bandeira: document.getElementById("bandeira-cartao").value,
+            codigoSeguranca: document.getElementById("codigo-seguranca").value.trim(),
+            preferencial: true
+        };
 
-            const enderecoPadrao = {
-                cpfCliente: cpfFormatado,
-                nome: "Endereço Principal",
-                tipoResidencia: dados.tipoEndereco,
-                tipoLogradouro: dados.tipoLogradouro,
-                logradouro: dados.logradouro,
-                numero: dados.numero,
-                bairro: dados.bairro,
-                cep: dados.cep,
-                cidade: dados.cidade,
-                estado: dados.estado,
-                pais: dados.pais,
-                tipoUso: "ambos",
-                observacao: dados.observacao
-            };
+        // Salvar no localStorage
+        let clientes = JSON.parse(localStorage.getItem("clientes") || "[]");
+        clientes.push(cliente);
+        localStorage.setItem("clientes", JSON.stringify(clientes));
 
-            const resEndereco = await fetch(`${API_BASE}/clientes/${cpfFormatado}/enderecos`, {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(enderecoPadrao)
-            });
+        // Define cliente atual
+        localStorage.setItem("clienteAtual", JSON.stringify(cliente));
 
-            if (!resEndereco.ok) throw new Error("Erro ao cadastrar endereço padrão");
+        // Salva endereços
+        let enderecos = JSON.parse(localStorage.getItem("enderecos") || "[]");
+        enderecos.push(enderecoEntrega, enderecoCobranca);
+        localStorage.setItem("enderecos", JSON.stringify(enderecos));
 
-            alert("Cliente e endereço cadastrados com sucesso!");
-            window.location.href = "ListaClientes.html";
+        // Salva cartão
+        let cartoes = JSON.parse(localStorage.getItem("cartoes") || "[]");
+        cartoes.push(cartao);
+        localStorage.setItem("cartoes", JSON.stringify(cartoes));
 
-        } catch (err) {
-            console.error(err);
-            alert("Ocorreu um erro ao salvar o cliente.");
-        }
+        alert("Cliente, endereços e cartão cadastrados com sucesso!");
+        window.location.href = "ListaLoja.html";
     });
 });

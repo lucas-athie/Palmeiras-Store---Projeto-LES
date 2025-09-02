@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Clientes</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
-    <style>
-        
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Transações do Cliente</title>
+  <link rel="stylesheet" href="../css/CadastroCliente.css"/>
+  <link rel="stylesheet" href="../css/Transacao.css"/>
 </head>
 <body>
-
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
@@ -43,31 +40,49 @@
     </div>
     <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
 </header>
-
 <main>
-    <section>
-        <h2>Clientes Cadastrados</h2>
+  <section>
+    <h2>Transações</h2>
 
-        <label for="filtro">🔍 Buscar cliente:</label>
-        <input type="text" id="filtro" placeholder="Digite qualquer informação..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    <div id="info-cliente" style="margin-bottom: 20px;">
+      <strong>Cliente:</strong> Lucas Athié <br>
+      <strong>CPF:</strong> 222.222.222-22
+    </div>
 
-        <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-clientes">
-            </tbody>
-        </table>
-    </section>
+    <table id="tabela-transacoes">
+      <thead>
+        <tr>
+          <th>Data</th>
+          <th>Descrição</th>
+          <th>Valor</th>
+          <th>Status</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas via JS -->
+      </tbody>
+    </table>
+  </section>
 </main>
 
-<script src="../js/ListaCliente.js"></script>
+<!-- Modal -->
+<div id="modalTroca" class="modal">
+  <div class="modal-content">
+    <h3>Solicitar Troca</h3>
+    <label for="motivoTroca">Motivo da troca:</label>
+    <textarea id="motivoTroca" rows="3" placeholder="Descreva o motivo..."></textarea>
+
+    <label for="imagemTroca">Imagem do produto:</label>
+    <input type="file" id="imagemTroca" accept="image/*">
+
+    <div class="modal-actions">
+      <button class="btn-cancelar" id="cancelarTroca">Cancelar</button>
+      <button class="btn-enviar" id="enviarTroca">Enviar</button>
+    </div>
+  </div>
+</div>
+
+<script src="../js/Transacao.js"></script>
 </body>
 </html>

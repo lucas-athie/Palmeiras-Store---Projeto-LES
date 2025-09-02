@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Clientes</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
-    <style>
-        
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Carrinho</title>
+  <link rel="stylesheet" href="../css/CadastroCliente.css"/>
+  <link rel="stylesheet" href="../css/ListaLoja.css"/>
 </head>
 <body>
-
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
@@ -45,29 +42,40 @@
 </header>
 
 <main>
-    <section>
-        <h2>Clientes Cadastrados</h2>
+  <section>
+    <h2 style="text-align:center; margin: 0 0 16px;">Meu Carrinho</h2>
 
-        <label for="filtro">🔍 Buscar cliente:</label>
-        <input type="text" id="filtro" placeholder="Digite qualquer informação..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    <table id="tabela-carrinho">
+      <thead>
+        <tr>
+          <th style="text-align:left">Produto</th>
+          <th>Preço</th>
+          <th>Quantidade</th>
+          <th>Subtotal</th>
+          <th>Ações</th>
+        </tr>
+      </thead>
+      <tbody>
+        <!-- Linhas do carrinho renderizadas via JS -->
+      </tbody>
+    </table>
 
-        <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-clientes">
-            </tbody>
-        </table>
-    </section>
+    <div class="info-bar">
+      <div id="itens-info">0 item(s)</div>
+      <div id="estado-lista"></div>
+    </div>
+
+    <h3 id="total-geral" style="text-align:right; margin-top: 8px;">Total: R$ 0,00</h3>
+
+    <div class="buttons-group" style="margin-top: 12px;">
+      <a href="ListaLoja.html" class="btn-secundario" style="text-decoration:none; display:inline-block; padding:10px 18px; border-radius:6px;">Continuar comprando</a>
+      <button id="btnLimparCarrinho" type="button" class="btn-secundario">Limpar carrinho</button>
+      <button id="btnFinalizar" type="button" class="btn-principal">Finalizar compra</button>
+    </div>
+  </section>
 </main>
 
-<script src="../js/ListaCliente.js"></script>
+<!-- Script no final para garantir que os elementos já existam -->
+<script src="../js/Carrinho.js"></script>
 </body>
 </html>

@@ -1,0 +1,241 @@
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        radial-gradient(circle at center, rgba(255,255,255,0.9) 0%, rgba(255,255,255,0.6) 30%, rgba(255,255,255,0) 60%),
+        url('../img/Fundo.jpg') center/cover no-repeat;
+    background-attachment: fixed;
+    color: #333;
+}
+
+#tabela-carrinho {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+#tabela-carrinho th,
+#tabela-carrinho td {
+  border: 1px solid #e6e6e6;
+  padding: 10px;
+  vertical-align: middle;
+}
+
+#tabela-carrinho thead th {
+  background: #006400;
+  color: #fff;
+  font-weight: 700;
+}
+
+#tabela-carrinho tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#tabela-carrinho tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+/* Alinhamentos por coluna */
+#tabela-carrinho thead th:nth-child(1),
+#tabela-carrinho tbody td:nth-child(1) {
+  text-align: left;     /* Produto */
+}
+
+#tabela-carrinho thead th:nth-child(2),
+#tabela-carrinho thead th:nth-child(4),
+#tabela-carrinho tbody td:nth-child(2),
+#tabela-carrinho tbody td:nth-child(4) {
+  text-align: right;    /* Preço e Subtotal */
+}
+
+#tabela-carrinho thead th:nth-child(3),
+#tabela-carrinho tbody td:nth-child(3),
+#tabela-carrinho thead th:nth-child(5),
+#tabela-carrinho tbody td:nth-child(5) {
+  text-align: center;   /* Quantidade e Ações */
+}
+
+/* Célula do produto (opcional: caso renderize imagem + nome) */
+.produto-cell {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.produto-cell img {
+  width: 56px;
+  height: 56px;
+  object-fit: cover;
+  border-radius: 6px;
+  border: 1px solid #eee;
+  background: #fafafa;
+}
+
+/* Controles de quantidade */
+.qtd-control {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  border: 1px solid #dcdcdc;
+  border-radius: 8px;
+  padding: 4px;
+  background: #fff;
+}
+
+.qtd-btn {
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: 6px;
+  background: #f4f6f8;
+  color: #333;
+  cursor: pointer;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.qtd-btn:hover {
+  background: #e9ecef;
+}
+
+.qtd-input {
+  width: 54px;
+  text-align: center;
+  border: 1px solid #dcdcdc;
+  border-radius: 6px;
+  padding: 6px 8px;
+  font-size: 14px;
+}
+
+/* Botões de ação na tabela */
+.acao-btn {
+  background-color: #006400;
+  color: #fff;
+  border: none;
+  padding: 8px 12px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 13px;
+}
+
+.acao-btn:hover {
+  background-color: #004d00;
+}
+
+.acao-btn.btn-remover {
+  background: #fff;
+  color: #b3261e;
+  border: 2px solid #b3261e;
+}
+
+.acao-btn.btn-remover:hover {
+  background: #ffe8e6;
+}
+
+/* Barra de informações e total */
+.info-bar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 8px 0 16px;
+  color: #555;
+  font-size: 14px;
+}
+
+#total-geral {
+  text-align: right;
+  margin-top: 8px;
+  font-size: 18px;
+  font-weight: 700;
+  color: #006400;
+}
+
+/* Grupo de botões inferiores */
+.buttons-group {
+  display: flex;
+  justify-content: flex-end;
+  gap: 10px;
+  flex-wrap: wrap;
+}
+
+button#btnFinalizar {
+  background-color: #006400;
+  color: #fff;
+  border: none;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+  transition: background-color 0.2s ease-in-out;
+}
+
+button#btnFinalizar:hover {
+  background-color: #004d00;
+}
+
+button#btnLimparCarrinho,
+.btn-secundario {
+  background: #fff;
+  color: #006400;
+  border: 2px solid #006400;
+  padding: 10px 18px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 14px;
+}
+
+button#btnLimparCarrinho:hover,
+.btn-secundario:hover {
+  background: #f4f6f8;
+}
+
+/* Estado vazio */
+.carrinho-vazio {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+}
+
+/* Responsividade */
+@media (max-width: 768px) {
+  #tabela-carrinho thead {
+    display: none;
+  }
+
+  #tabela-carrinho,
+  #tabela-carrinho tbody,
+  #tabela-carrinho tr,
+  #tabela-carrinho td {
+    display: block;
+    width: 100%;
+  }
+
+  #tabela-carrinho tr {
+    margin-bottom: 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  #tabela-carrinho td {
+    text-align: left !important;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 12px;
+  }
+
+  #tabela-carrinho td:last-child {
+    border-bottom: none;
+  }
+
+  .info-bar {
+    flex-direction: column;
+    gap: 6px;
+    align-items: flex-start;
+  }
+
+  .buttons-group {
+    justify-content: stretch;
+  }
+}

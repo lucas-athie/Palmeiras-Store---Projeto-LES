@@ -11,21 +11,28 @@
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
-        <nav aria-label="Edição">
+        <nav aria-label="Seção do sistema">
             <ul>
                 <li>
-                    <a href="#" id="tab-cliente" class="menu-principal">Cliente</a>
+                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
                     <ul class="submenu">
-                        <li><a href="CadastroCartao.html">Cartões</a></li>
+                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
                         <li><a href="CadastroCliente.html">Cadastro</a></li>
                         <li><a href="EditarCliente.html">Editar</a></li>
                         <li><a href="CadastroEndereco.html">Endereço</a></li>
+                        <li><a href="Transacao.html">Transação</a></li>
+                        <li><a href="Carrinho.html">Carrinho</a></li>
+                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
                     </ul>
                 </li>
+
                 <li>
                     <a href="#" id="tab-admin" class="menu-principal">Admin</a>
                     <ul class="submenu">
                         <li><a href="ListaClientes.html">Lista</a></li>
+                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
                     </ul>
                 </li>
             </ul>
@@ -33,7 +40,6 @@
     </div>
     <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
 </header>
-
 <main>
     <section id="cliente">
         <h2>Editar Cliente</h2>
@@ -93,66 +99,6 @@
                 <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
             </div>
 
-            <div class="form-group">
-                <label for="tipo-endereco">Tipo de Endereço:</label>
-                <select name="tipo-endereco" id="tipo-endereco" required>
-                    <option value="">Selecione</option>
-                    <option value="casa">Casa</option>
-                    <option value="apartamento">Apartamento</option>
-                    <option value="condominio">Condomínio</option>
-                </select>
-            </div>
-
-            <div class="form-group">
-                <label for="tipo-logradouro">Tipo de Logradouro:</label>
-                <select id="tipo-logradouro" name="tipo-logradouro" required>
-                    <option value="">Selecione</option>
-                    <option value="rua">Rua</option>
-                    <option value="avenida">Avenida</option>
-                    <option value="travessa">Travessa</option>
-                    <option value="alameda">Alameda</option>
-                    <option value="rodovia">Rodovia</option>
-                    <option value="estrada">Estrada</option>
-                    <option value="praca">Praça</option>
-                    <option value="vicinal">Vicinal</option>
-                </select>
-            </div>
-
-            <div class="form-group full-width">
-                <label for="logradouro">Logradouro:</label>
-                <input type="text" id="logradouro" name="logradouro" placeholder="Digite o logradouro" required>
-            </div>
-
-            <div class="form-group">
-                <label for="numero">Número:</label>
-                <input type="text" id="numero" name="numero" placeholder="Digite o número" required>
-            </div>
-
-            <div class="form-group">
-                <label for="bairro">Bairro:</label>
-                <input type="text" id="bairro" name="bairro" placeholder="Digite o Bairro" required>
-            </div>
-
-            <div class="form-group">
-                <label for="cep">CEP:</label>
-                <input type="text" id="cep" name="cep" placeholder="00000-000" pattern="\d{5}-\d{3}" title="Digite o CEP no formato 00000-000" required>
-            </div>
-
-            <div class="form-group">
-                <label for="cidade">Cidade:</label>
-                <input type="text" id="cidade" name="cidade" placeholder="Digite a cidade" required>
-            </div>
-
-            <div class="form-group">
-                <label for="estado">Estado:</label>
-                <input type="text" id="estado" name="estado" placeholder="Digite o estado" required>
-            </div>
-
-            <div class="form-group">
-                <label for="pais">País:</label>
-                <input type="text" id="pais" name="pais" placeholder="Digite o País" required>
-            </div>
-
             <div class="form-group full-width">
                 <label for="obs">Observação:</label>
                 <input type="text" id="obs" name="obs" placeholder="Digite a Observação">
@@ -169,8 +115,8 @@
             <div class="form-group full-width">
                 <button type="button" id="btnSalvar">Salvar Alterações</button>
                 <button type="button" id="btnExcluir" style="background-color: red; color: white;">Excluir</button>
-                <button type="button" onclick="window.location.href='CadastroEndereco.html'">Endereços</button>
-                <button type="button" onclick="window.location.href='CadastroCartao.html'">Cartão</button>
+                <button type="button" id="btnEnderecos">Endereços</button>
+                <button type="button" id="btnCartao">Cartão</button>
             </div>
         </form>
     </section>

@@ -1,0 +1,64 @@
+#tabela-transacoes-admin {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 12px;
+}
+
+#tabela-transacoes-admin th,
+#tabela-transacoes-admin td {
+  border: 1px solid #e6e6e6;
+  padding: 10px;
+  vertical-align: middle;
+}
+
+#tabela-transacoes-admin thead th {
+  background: #006400;
+  color: #fff;
+  font-weight: 700;
+}
+
+#tabela-transacoes-admin tbody tr:nth-child(even) {
+  background-color: #f9f9f9;
+}
+
+#tabela-transacoes-admin tbody tr:hover {
+  background-color: #f1f1f1;
+}
+
+.carrinho-vazio {
+  text-align: center;
+  color: #666;
+  padding: 20px 0;
+}
+
+@media (max-width: 768px) {
+  #tabela-transacoes-admin thead {
+    display: none;
+  }
+
+  #tabela-transacoes-admin,
+  #tabela-transacoes-admin tbody,
+  #tabela-transacoes-admin tr,
+  #tabela-transacoes-admin td {
+    display: block;
+    width: 100%;
+  }
+
+  #tabela-transacoes-admin tr {
+    margin-bottom: 12px;
+    border: 1px solid #e6e6e6;
+    border-radius: 8px;
+    overflow: hidden;
+  }
+
+  #tabela-transacoes-admin td {
+    text-align: left !important;
+    border: none;
+    border-bottom: 1px solid #f0f0f0;
+    padding: 10px 12px;
+  }
+
+  #tabela-transacoes-admin td:last-child {
+    border-bottom: none;
+  }
+}

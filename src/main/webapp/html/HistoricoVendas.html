@@ -1,16 +1,14 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Clientes</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
-    <style>
-        
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Histórico de Vendas</title>
+  <link rel="stylesheet" href="../css/CadastroCliente.css"/>
+  <link rel="stylesheet" href="../css/HistoricoVendas.css"/>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
-
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
@@ -45,29 +43,37 @@
 </header>
 
 <main>
-    <section>
-        <h2>Clientes Cadastrados</h2>
+  <section class="filtros-section">
+    <h2>Consulta de Histórico de Vendas</h2>
+    <div class="filtros">
+      <label>
+        Data Início:
+        <input type="date" id="dataInicio">
+      </label>
+      <label>
+        Data Fim:
+        <input type="date" id="dataFim">
+      </label>
+      <label>
+        Tipo:
+        <select id="tipoConsulta">
+          <option value="produto">Produto</option>
+          <option value="categoria">Categoria</option>
+        </select>
+      </label>
+      <label>
+        Nome:
+        <input type="text" id="nomeConsulta" placeholder="Digite o nome...">
+      </label>
+      <button id="btnGerar">Gerar Gráfico</button>
+    </div>
+  </section>
 
-        <label for="filtro">🔍 Buscar cliente:</label>
-        <input type="text" id="filtro" placeholder="Digite qualquer informação..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
-
-        <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-clientes">
-            </tbody>
-        </table>
-    </section>
+  <section class="grafico-section">
+    <canvas id="graficoVendas"></canvas>
+  </section>
 </main>
 
-<script src="../js/ListaCliente.js"></script>
+<script src="../js/HistoricoVendas.js"></script>
 </body>
 </html>

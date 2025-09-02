@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Lista de Produtos</title>
+  <link rel="stylesheet" href="../css/CadastroCliente.css"/>
+  <link rel="stylesheet" href="../css/ListaLoja.css"/>
+</head>
+<body>
+<header>
+    <div class="header-left">
+        <h1>Palmeiras Store</h1>
+        <nav aria-label="Seção do sistema">
+            <ul>
+                <li>
+                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
+                    <ul class="submenu">
+                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
+                        <li><a href="CadastroCliente.html">Cadastro</a></li>
+                        <li><a href="EditarCliente.html">Editar</a></li>
+                        <li><a href="CadastroEndereco.html">Endereço</a></li>
+                        <li><a href="Transacao.html">Transação</a></li>
+                        <li><a href="Carrinho.html">Carrinho</a></li>
+                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
+                    </ul>
+                </li>
+
+                <li>
+                    <a href="#" id="tab-admin" class="menu-principal">Admin</a>
+                    <ul class="submenu">
+                        <li><a href="ListaClientes.html">Lista</a></li>
+                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
+                    </ul>
+                </li>
+            </ul>
+        </nav>
+    </div>
+    <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
+</header>
+<main>
+  <section>
+    <h2 style="text-align:center; margin: 0 0 16px;">Lista de Produtos</h2>
+
+    <div class="filtros">
+      <div class="form-group full-width" style="grid-column: 1 / -1;">
+        <label for="busca">Buscar</label>
+        <input type="text" id="busca" placeholder="Digite nome, categoria ou código...">
+      </div>
+
+      <div class="form-group">
+        <label for="categoria">Categoria</label>
+        <select id="categoria">
+          <option value="">Todas</option>
+          <option value="camisas">Camisas</option>
+          <option value="agasalhos">Agasalhos</option>
+          <option value="acessorios">Acessórios</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label for="precoMin">Preço mínimo</label>
+        <input type="number" id="precoMin" min="0" step="0.01" placeholder="0,00">
+      </div>
+
+      <div class="form-group">
+        <label for="precoMax">Preço máximo</label>
+        <input type="number" id="precoMax" min="0" step="0.01" placeholder="999,99">
+      </div>
+
+      <div class="form-group">
+        <label for="ordenar">Ordenar por</label>
+        <select id="ordenar">
+          <option value="">Padrão</option>
+          <option value="preco_asc">Preço: menor → maior</option>
+          <option value="preco_desc">Preço: maior → menor</option>
+          <option value="nome_asc">Nome: A → Z</option>
+          <option value="nome_desc">Nome: Z → A</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>&nbsp;</label>
+        <button id="btnLimpar" type="button" class="btn-secundario">Limpar filtros</button>
+      </div>
+    </div>
+
+    <div class="info-bar">
+      <div id="contador">Carregando produtos...</div>
+      <div id="estado-lista"></div>
+    </div>
+
+    <div id="grid-produtos" class="grid-produtos">
+
+    </div>
+  </section>
+</main>
+
+<script src="../js/ListaLoja.js"></script>
+</body>
+</html>

@@ -1,16 +1,13 @@
 <!DOCTYPE html>
 <html lang="pt-BR">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Lista de Clientes</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
-    <style>
-        
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Recomendações Inteligentes</title>
+  <link rel="stylesheet" href="../css/CadastroCliente.css"/>
+  <link rel="stylesheet" href="../css/RecomendacaoIA.css"/>
 </head>
 <body>
-
 <header>
     <div class="header-left">
         <h1>Palmeiras Store</h1>
@@ -45,29 +42,37 @@
 </header>
 
 <main>
-    <section>
-        <h2>Clientes Cadastrados</h2>
+  <section class="ia-section">
+    <h2>Recomendações Inteligentes</h2>
+    <p>Digite abaixo o que você está procurando ou descreva suas preferências. Nossa IA irá sugerir os melhores produtos para você.</p>
 
-        <label for="filtro">🔍 Buscar cliente:</label>
-        <input type="text" id="filtro" placeholder="Digite qualquer informação..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+    <div class="ia-input-area">
+      <textarea id="entradaCliente" placeholder="Ex: Quero uma camisa verde para treino, tamanho M..."></textarea>
+      <button id="btnRecomendar">Buscar Recomendações</button>
+    </div>
 
-        <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-clientes">
-            </tbody>
-        </table>
-    </section>
+    <div id="recomendacoesIA" class="ia-recomendacoes">
+      <!-- Recomendações aparecerão aqui futuramente -->
+      <p class="placeholder">As sugestões aparecerão aqui assim que a IA estiver integrada.</p>
+    </div>
+  </section>
 </main>
 
-<script src="../js/ListaCliente.js"></script>
+<script>
+  document.getElementById("btnRecomendar").addEventListener("click", () => {
+    const entrada = document.getElementById("entradaCliente").value.trim();
+    const area = document.getElementById("recomendacoesIA");
+
+    if (!entrada) {
+      alert("Por favor, descreva o que você procura.");
+      return;
+    }
+
+    area.innerHTML = `
+      <p><strong>Você escreveu:</strong> ${entrada}</p>
+      <p class="placeholder">A IA está sendo integrada. Em breve você verá recomendações personalizadas aqui.</p>
+    `;
+  });
+</script>
 </body>
 </html>
