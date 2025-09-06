@@ -1,0 +1,666 @@
+CREATE TABLE countries (
+    cou_id BIGSERIAL PRIMARY KEY,
+    cou_country TEXT NOT NULL,
+    cou_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    cou_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    cou_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE states (
+    sta_id BIGSERIAL PRIMARY KEY,
+    sta_state TEXT NOT NULL,
+    sta_uf VARCHAR(10) NOT NULL,
+    sta_cou_id BIGINT NOT NULL REFERENCES countries (cou_id),
+    sta_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    sta_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    sta_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE cities (
+    cit_id BIGSERIAL PRIMARY KEY,
+    cit_city TEXT NOT NULL,
+    cit_sta_id BIGINT NOT NULL REFERENCES states (sta_id),
+    cit_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    cit_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    cit_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE street_types (
+    sty_id BIGSERIAL PRIMARY KEY,
+    sty_street_type TEXT NOT NULL,
+    sty_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    sty_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    sty_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE streets (
+    str_id BIGSERIAL PRIMARY KEY,
+    str_street TEXT NOT NULL,
+    str_neighborhood TEXT NOT NULL,
+    str_zip VARCHAR(20) NOT NULL,
+    str_sty_id BIGINT NOT NULL REFERENCES street_types (sty_id),
+    str_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    str_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    str_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE residence_types (
+    rty_id BIGSERIAL PRIMARY KEY,
+    rty_residence_type TEXT NOT NULL,
+    rty_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    rty_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    rty_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Endereços
+CREATE TABLE addresses (
+    add_id BIGSERIAL PRIMARY KEY,
+    add_number INT NOT NULL,
+    add_complement TEXT,
+    add_rty_id BIGINT NOT NULL REFERENCES residence_types (rty_id),
+    add_cit_id BIGINT NOT NULL REFERENCES cities (cit_id),
+    add_str_id BIGINT NOT NULL REFERENCES streets (str_id),
+    add_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    add_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    add_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+CREATE TABLE addresses_names (
+    ana_id BIGSERIAL PRIMARY KEY,
+    ana_name TEXT NOT NULL,
+    ana_add_id BIGINT NOT NULL REFERENCES addresses (add_id),
+    ana_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    ana_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    ana_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Gêneros
+CREATE TABLE genders (
+    gen_id BIGSERIAL PRIMARY KEY,
+    gen_name VARCHAR(50) NOT NULL
+);
+
+-- Tipos de pagamento
+CREATE TABLE payment_types (
+    pty_id BIGSERIAL PRIMARY KEY,
+    pty_payment_type TEXT NOT NULL,
+    pty_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    pty_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    pty_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Clientes (usuários)
+CREATE TABLE users (
+    usr_id BIGSERIAL PRIMARY KEY,
+    usr_code UUID NOT NULL DEFAULT gen_random_uuid(), -- Código único
+    usr_name TEXT NOT NULL,
+    usr_email TEXT UNIQUE NOT NULL,
+    usr_password TEXT NOT NULL CHECK (
+        length(usr_password) >= 8
+        AND usr_password ~ '[A-Z]'
+        AND usr_password ~ '[a-z]'
+        AND usr_password ~ '[0-9]'
+        AND usr_password ~ '[^a-zA-Z0-9]'
+    ), -- Senha forte
+    usr_active BOOLEAN NOT NULL DEFAULT true,
+    usr_gen_id BIGINT NOT NULL REFERENCES genders (gen_id),
+    usr_birthday DATE NOT NULL,
+    usr_cpf VARCHAR(20) UNIQUE NOT NULL,
+    usr_phone_type TEXT NOT NULL,
+    usr_phone_ddd VARCHAR(5) NOT NULL,
+    usr_phone_number VARCHAR(20) NOT NULL,
+    usr_ranking INT DEFAULT 0,
+    usr_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    usr_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    usr_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Relacionamento Usuário x Endereços
+CREATE TABLE users_addresses (
+    uad_usr_id BIGINT NOT NULL REFERENCES users (usr_id),
+    uad_ana_id BIGINT NOT NULL REFERENCES addresses_names (ana_id),
+    uad_type VARCHAR(50) NOT NULL, -- "Cobranca" ou "Entrega"
+    uad_observacoes TEXT,
+    uad_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    uad_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    uad_publishedAt TIMESTAMP NOT NULL DEFAULT now(),
+    PRIMARY KEY (uad_usr_id, uad_ana_id)
+);
+
+-- Cartões
+CREATE TABLE cards (
+    car_id BIGSERIAL PRIMARY KEY,
+    car_usr_id BIGINT NOT NULL REFERENCES users (usr_id),
+    car_principal BOOLEAN NOT NULL DEFAULT false,
+    car_number VARCHAR(20) NOT NULL,
+    car_ccv VARCHAR(10) NOT NULL,
+    car_holder TEXT NOT NULL,
+    car_valid DATE NOT NULL,
+    car_pty_id BIGINT NOT NULL REFERENCES payment_types (pty_id),
+    car_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    car_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    car_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+-- Transações do cliente
+CREATE TABLE transactions (
+    tra_id BIGSERIAL PRIMARY KEY,
+    tra_usr_id BIGINT NOT NULL REFERENCES users (usr_id),
+    tra_amount NUMERIC(10,2) NOT NULL,
+    tra_date TIMESTAMP NOT NULL DEFAULT now(),
+    tra_description TEXT,
+    tra_createdAt TIMESTAMP NOT NULL DEFAULT now(),
+    tra_updatedAt TIMESTAMP NOT NULL DEFAULT now(),
+    tra_publishedAt TIMESTAMP NOT NULL DEFAULT now()
+);
+
+==================================================================================
+
+-- Função para checar endereços obrigatórios
+CREATE OR REPLACE FUNCTION check_user_addresses()
+RETURNS TRIGGER AS $$
+DECLARE
+    has_cobranca INT;
+    has_entrega INT;
+BEGIN
+    SELECT COUNT(*) INTO has_cobranca
+    FROM users_addresses
+    WHERE uad_usr_id = NEW.uad_usr_id AND uad_type = 'Cobranca';
+
+    SELECT COUNT(*) INTO has_entrega
+    FROM users_addresses
+    WHERE uad_usr_id = NEW.uad_usr_id AND uad_type = 'Entrega';
+
+    IF has_cobranca = 0 OR has_entrega = 0 THEN
+        RAISE EXCEPTION 'Usuário % deve ter ao menos um endereço de cobrança e um de entrega', NEW.uad_usr_id;
+    END IF;
+
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger após INSERT ou DELETE em users_addresses
+CREATE TRIGGER trg_check_user_addresses
+AFTER INSERT OR DELETE ON users_addresses
+FOR EACH ROW
+EXECUTE FUNCTION check_user_addresses();
+
+=================================================================================
+
+-- Função para garantir apenas 1 cartão principal
+CREATE OR REPLACE FUNCTION ensure_single_main_card()
+RETURNS TRIGGER AS $$
+BEGIN
+    IF NEW.car_principal = true THEN
+        UPDATE cards
+        SET car_principal = false
+        WHERE car_usr_id = NEW.car_usr_id
+          AND car_id <> NEW.car_id;
+    END IF;
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Trigger após INSERT ou UPDATE em cards
+CREATE TRIGGER trg_single_main_card
+AFTER INSERT OR UPDATE ON cards
+FOR EACH ROW
+EXECUTE FUNCTION ensure_single_main_card();
+
+===============================================================================
+
+-- Função genérica para atualizar updatedAt
+CREATE OR REPLACE FUNCTION set_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW."usr_updatedAt" := now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+-- Adiciona trigger para a tabela users
+CREATE TRIGGER trg_users_updatedAt
+BEFORE UPDATE ON users
+FOR EACH ROW
+EXECUTE FUNCTION set_updated_at();
+
+-- Podemos repetir para outras tabelas
+-- (exemplo para cards)
+CREATE OR REPLACE FUNCTION set_cards_updated_at()
+RETURNS TRIGGER AS $$
+BEGIN
+    NEW.car_updatedAt := now();
+    RETURN NEW;
+END;
+$$ LANGUAGE plpgsql;
+
+CREATE TRIGGER trg_cards_updatedAt
+BEFORE UPDATE ON cards
+FOR EACH ROW
+EXECUTE FUNCTION set_cards_updated_at();
+
+-- Para evitar duplicação e permitir ON CONFLICT
+ALTER TABLE countries       ADD CONSTRAINT uq_countries_country       UNIQUE(cou_country);
+ALTER TABLE states          ADD CONSTRAINT uq_states_state_uf_country UNIQUE(sta_state, sta_uf, sta_cou_id);
+ALTER TABLE cities          ADD CONSTRAINT uq_cities_city_state       UNIQUE(cit_city, cit_sta_id);
+ALTER TABLE street_types    ADD CONSTRAINT uq_street_types_type       UNIQUE(sty_street_type);
+ALTER TABLE streets         ADD CONSTRAINT uq_streets_street_nb_type  UNIQUE(str_street, str_neighborhood, str_sty_id);
+ALTER TABLE residence_types ADD CONSTRAINT uq_residence_types_type    UNIQUE(rty_residence_type);
+ALTER TABLE genders         ADD CONSTRAINT uq_genders_name            UNIQUE(gen_name);
+ALTER TABLE payment_types   ADD CONSTRAINT uq_payment_types_type     UNIQUE(pty_payment_type);
+
+-- 2.1 País
+CREATE OR REPLACE FUNCTION get_or_create_country(p_country TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  cid BIGINT;
+BEGIN
+  INSERT INTO countries(cou_country)
+  VALUES (p_country)
+  ON CONFLICT (cou_country) DO NOTHING
+  RETURNING cou_id INTO cid;
+
+  IF cid IS NULL THEN
+    SELECT cou_id INTO cid FROM countries WHERE cou_country = p_country;
+  END IF;
+
+  RETURN cid;
+END;
+$$;
+
+-- 2.2 Estado
+CREATE OR REPLACE FUNCTION get_or_create_state(p_state TEXT, p_uf TEXT, p_country TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  sid BIGINT;
+  cid BIGINT := get_or_create_country(p_country);
+BEGIN
+  INSERT INTO states(sta_state, sta_uf, sta_cou_id)
+  VALUES (p_state, p_uf, cid)
+  ON CONFLICT (sta_state, sta_uf, sta_cou_id) DO NOTHING
+  RETURNING sta_id INTO sid;
+
+  IF sid IS NULL THEN
+    SELECT sta_id INTO sid
+      FROM states
+     WHERE sta_state = p_state
+       AND sta_uf    = p_uf
+       AND sta_cou_id= cid;
+  END IF;
+
+  RETURN sid;
+END;
+$$;
+
+-- 2.3 Cidade
+CREATE OR REPLACE FUNCTION get_or_create_city(p_city TEXT, p_state TEXT, p_uf TEXT, p_country TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  cid_new BIGINT;
+  sid     BIGINT := get_or_create_state(p_state, p_uf, p_country);
+BEGIN
+  INSERT INTO cities(cit_city, cit_sta_id)
+  VALUES (p_city, sid)
+  ON CONFLICT (cit_city, cit_sta_id) DO NOTHING
+  RETURNING cit_id INTO cid_new;
+
+  IF cid_new IS NULL THEN
+    SELECT cit_id INTO cid_new
+      FROM cities
+     WHERE cit_city = p_city
+       AND cit_sta_id = sid;
+  END IF;
+
+  RETURN cid_new;
+END;
+$$;
+
+-- 2.4 Tipo de logradouro
+CREATE OR REPLACE FUNCTION get_or_create_street_type(p_type TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  stid BIGINT;
+BEGIN
+  INSERT INTO street_types(sty_street_type)
+  VALUES (p_type)
+  ON CONFLICT (sty_street_type) DO NOTHING
+  RETURNING sty_id INTO stid;
+
+  IF stid IS NULL THEN
+    SELECT sty_id INTO stid
+      FROM street_types
+     WHERE sty_street_type = p_type;
+  END IF;
+
+  RETURN stid;
+END;
+$$;
+
+-- 2.5 Logradouro
+CREATE OR REPLACE FUNCTION get_or_create_street(
+  p_street TEXT, p_neighborhood TEXT, p_zip VARCHAR, p_type TEXT
+)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  sid BIGINT;
+  stt_id BIGINT := get_or_create_street_type(p_type);
+BEGIN
+  INSERT INTO streets(str_street, str_neighborhood, str_zip, str_sty_id)
+  VALUES (p_street, p_neighborhood, p_zip, stt_id)
+  ON CONFLICT (str_street, str_neighborhood, str_sty_id) DO NOTHING
+  RETURNING str_id INTO sid;
+
+  IF sid IS NULL THEN
+    SELECT str_id INTO sid
+      FROM streets
+     WHERE str_street       = p_street
+       AND str_neighborhood = p_neighborhood
+       AND str_sty_id       = stt_id;
+  END IF;
+
+  RETURN sid;
+END;
+$$;
+
+-- 2.6 Tipo de residência
+CREATE OR REPLACE FUNCTION get_or_create_residence_type(p_type TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  rid BIGINT;
+BEGIN
+  INSERT INTO residence_types(rty_residence_type)
+  VALUES (p_type)
+  ON CONFLICT (rty_residence_type) DO NOTHING
+  RETURNING rty_id INTO rid;
+
+  IF rid IS NULL THEN
+    SELECT rty_id INTO rid
+      FROM residence_types
+     WHERE rty_residence_type = p_type;
+  END IF;
+
+  RETURN rid;
+END;
+$$;
+
+-- 2.7 Gênero
+CREATE OR REPLACE FUNCTION get_or_create_gender(p_name TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  gid BIGINT;
+BEGIN
+  INSERT INTO genders(gen_name)
+  VALUES (p_name)
+  ON CONFLICT (gen_name) DO NOTHING
+  RETURNING gen_id INTO gid;
+
+  IF gid IS NULL THEN
+    SELECT gen_id INTO gid
+      FROM genders
+     WHERE gen_name = p_name;
+  END IF;
+
+  RETURN gid;
+END;
+$$;
+
+-- 2.8 Tipo de pagamento
+CREATE OR REPLACE FUNCTION get_or_create_payment_type(p_name TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  pid BIGINT;
+BEGIN
+  INSERT INTO payment_types(pty_payment_type)
+  VALUES (p_name)
+  ON CONFLICT (pty_payment_type) DO NOTHING
+  RETURNING pty_id INTO pid;
+
+  IF pid IS NULL THEN
+    SELECT pty_id INTO pid
+      FROM payment_types
+     WHERE pty_payment_type = p_name;
+  END IF;
+
+  RETURN pid;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION create_address(
+  p_user_id       BIGINT,
+  p_address_name  TEXT,
+  p_type          TEXT,           -- 'Cobranca' ou 'Entrega'
+  p_observacoes   TEXT,
+  p_res_type      TEXT,
+  p_country       TEXT,
+  p_state         TEXT,
+  p_uf            TEXT,
+  p_city          TEXT,
+  p_street_type   TEXT,
+  p_street        TEXT,           -- <--- CORREÇÃO AQUI
+  p_neighborhood  TEXT,
+  p_zip           VARCHAR,
+  p_number        INT,
+  p_complement    TEXT
+)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  add_id  BIGINT;
+  rty_id  BIGINT := get_or_create_residence_type(p_res_type);
+  cit_id  BIGINT := get_or_create_city(p_city, p_state, p_uf, p_country);
+  str_id  BIGINT := get_or_create_street(p_street, p_neighborhood, p_zip, p_street_type);
+BEGIN
+  INSERT INTO addresses(
+    add_number, add_complement, add_rty_id, add_cit_id, add_str_id
+  ) VALUES (
+    p_number, p_complement, rty_id, cit_id, str_id
+  )
+  RETURNING add_id INTO add_id;
+
+  INSERT INTO addresses_names(ana_name, ana_add_id)
+  VALUES (p_address_name, add_id);
+
+  INSERT INTO users_addresses(uad_usr_id, uad_ana_id, uad_type, uad_observacoes)
+  VALUES (p_user_id, add_id, p_type, p_observacoes);
+
+  RETURN add_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION create_address(
+  p_user_id       BIGINT,
+  p_address_name  TEXT,
+  p_type          TEXT,      -- 'Cobranca' ou 'Entrega'
+  p_observacoes   TEXT,
+  p_res_type      TEXT,
+  p_country       TEXT,
+  p_state         TEXT,
+  p_uf            TEXT,
+  p_city          TEXT,
+  p_street_type   TEXT,
+  p_street        TEXT,      -- corrigido: parâmetro TEXT sem vírgula extra
+  p_neighborhood  TEXT,
+  p_zip           VARCHAR,
+  p_number        INT,
+  p_complement    TEXT
+)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  add_id BIGINT;
+  rty_id BIGINT := get_or_create_residence_type(p_res_type);
+  cit_id BIGINT := get_or_create_city(p_city, p_state, p_uf, p_country);
+  str_id BIGINT := get_or_create_street(p_street, p_neighborhood, p_zip, p_street_type);
+BEGIN
+  INSERT INTO addresses(
+    add_number, add_complement, add_rty_id, add_cit_id, add_str_id
+  ) VALUES (
+    p_number, p_complement, rty_id, cit_id, str_id
+  )
+  RETURNING add_id INTO add_id;
+
+  INSERT INTO addresses_names(ana_name, ana_add_id)
+  VALUES (p_address_name, add_id);
+
+  INSERT INTO users_addresses(uad_usr_id, uad_ana_id, uad_type, uad_observacoes)
+  VALUES (p_user_id, add_id, p_type, p_observacoes);
+
+  RETURN add_id;
+END;
+$$;
+
+CREATE OR REPLACE FUNCTION get_or_create_gender(p_name TEXT)
+RETURNS BIGINT LANGUAGE plpgsql AS $$
+DECLARE
+  gid BIGINT;
+BEGIN
+  INSERT INTO genders(gen_name)
+    VALUES (p_name)
+  ON CONFLICT (gen_name) DO NOTHING
+  RETURNING gen_id INTO gid;
+
+  IF gid IS NULL THEN
+    SELECT gen_id INTO gid FROM genders WHERE gen_name = p_name;
+  END IF;
+  RETURN gid;
+END;
+$$;
+
+-- 1) Caso já exista, remova a função antiga
+DROP FUNCTION IF EXISTS create_address(
+  BIGINT, TEXT, TEXT, TEXT, TEXT,
+  TEXT, TEXT, TEXT, TEXT, TEXT,
+  TEXT, TEXT, VARCHAR, INT, TEXT
+);
+
+-- 1) Remova a versão anterior (caso exista)
+DROP FUNCTION IF EXISTS create_address(
+  BIGINT, TEXT, TEXT, TEXT, TEXT,
+  TEXT, TEXT, TEXT, TEXT, TEXT,
+  TEXT, TEXT, VARCHAR, INT, TEXT
+);
+
+-- 2) Crie a função corrigida, capturando o ana_id antes de inserir em users_addresses
+CREATE OR REPLACE FUNCTION create_address(
+  p_user_id       BIGINT,
+  p_address_name  TEXT,
+  p_type          TEXT,
+  p_observacoes   TEXT,
+  p_res_type      TEXT,
+  p_country       TEXT,
+  p_state         TEXT,
+  p_uf            TEXT,
+  p_city          TEXT,
+  p_street_type   TEXT,
+  p_street        TEXT,
+  p_neighborhood  TEXT,
+  p_zip           VARCHAR,
+  p_number        INT,
+  p_complement    TEXT
+)
+RETURNS BIGINT
+LANGUAGE plpgsql
+AS $$
+DECLARE
+  v_address_id  BIGINT;
+  v_ana_id      BIGINT;
+  v_rty_id      BIGINT := get_or_create_residence_type(p_res_type);
+  v_cit_id      BIGINT := get_or_create_city(p_city, p_state, p_uf, p_country);
+  v_str_id      BIGINT := get_or_create_street(p_street, p_neighborhood, p_zip, p_street_type);
+BEGIN
+  INSERT INTO addresses(
+    add_number, add_complement, add_rty_id, add_cit_id, add_str_id
+  ) VALUES (
+    p_number, p_complement, v_rty_id, v_cit_id, v_str_id
+  )
+  RETURNING add_id INTO v_address_id;
+
+  INSERT INTO addresses_names(ana_name, ana_add_id)
+  VALUES (p_address_name, v_address_id)
+  RETURNING ana_id INTO v_ana_id;
+
+  INSERT INTO users_addresses(
+    uad_usr_id, uad_ana_id, uad_type, uad_observacoes
+  ) VALUES (
+    p_user_id, v_ana_id, p_type, p_observacoes
+  );
+
+  RETURN v_address_id;
+END;
+$$;
+
+DROP TRIGGER IF EXISTS trg_check_user_addresses
+  ON users_addresses;
+
+  CREATE CONSTRAINT TRIGGER trg_check_user_addresses
+    AFTER INSERT OR DELETE ON users_addresses
+    DEFERRABLE INITIALLY DEFERRED
+    FOR EACH ROW
+  EXECUTE FUNCTION check_user_addresses();
+
+  -- Remova qualquer versão antiga
+  DROP FUNCTION IF EXISTS create_card(
+    BIGINT,
+    BOOLEAN,
+    VARCHAR,
+    VARCHAR,
+    TEXT,
+    DATE,
+    TEXT
+  );
+
+  -- 1) Adicione a nova coluna texto para o tipo de pagamento
+  ALTER TABLE cards
+    ADD COLUMN IF NOT EXISTS car_payment_type TEXT;
+
+  -- 2) Remova de vez a coluna antiga (caso ainda exista)
+  ALTER TABLE cards
+    DROP COLUMN IF EXISTS car_pty_id;
+
+  -- 3) Remova qualquer versão antiga da função
+  DROP FUNCTION IF EXISTS create_card(
+    BIGINT,
+    BOOLEAN,
+    VARCHAR,
+    VARCHAR,
+    TEXT,
+    DATE,
+    TEXT
+  );
+
+  -- 4) Recrie a função ajustada
+  CREATE OR REPLACE FUNCTION create_card(
+    p_user_id      BIGINT,
+    p_principal    BOOLEAN,
+    p_number       VARCHAR,
+    p_ccv          VARCHAR,
+    p_holder       TEXT,
+    p_valid        DATE,
+    p_payment_type TEXT
+  )
+  RETURNS BIGINT
+  LANGUAGE plpgsql
+  AS $$
+  DECLARE
+    v_card_id BIGINT;
+  BEGIN
+    INSERT INTO cards(
+      car_usr_id,
+      car_principal,
+      car_number,
+      car_ccv,
+      car_holder,
+      car_valid,
+      car_payment_type
+    ) VALUES (
+      p_user_id,
+      p_principal,
+      p_number,
+      p_ccv,
+      p_holder,
+      p_valid,
+      p_payment_type
+    )
+    RETURNING car_id INTO v_card_id;
+
+    RETURN v_card_id;
+  END;
+  $$;
