@@ -7,13 +7,15 @@ import org.example.model.dao.impl.EnderecoDaoJDBC;
 import java.sql.Connection;
 
 public class DaoFactory {
-    public static ClienteDao createClienteDao() {
-        return new ClienteDaoJDBC();
+    public static ClienteDao createClienteDao(Connection conn) {
+        return new ClienteDaoJDBC(conn);
     }
-    public static CartaoDao createCartaoDao() {
-        return new CartaoDaoJDBC();
+
+    public static CartaoDao createCartaoDao(Connection conn) {
+        return new CartaoDaoJDBC(conn);
     }
-    public static EnderecoDao createEnderecoDao() {
-        return new EnderecoDaoJDBC();
+
+    public static EnderecoDao createEnderecoDao(Connection conn) {
+        return new EnderecoDaoJDBC(conn);
     }
 }
