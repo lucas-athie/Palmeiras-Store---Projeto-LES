@@ -63,4 +63,8 @@ public class Cartao {
     public void setCodigoSeguranca(String codigoSeguranca) {
         this.codigoSeguranca = codigoSeguranca;
     }
+
+    public String getCodigoSeguranca() {
+        return codigoSeguranca;
+    }
 }

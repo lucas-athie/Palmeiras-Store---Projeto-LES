@@ -1,7 +1,9 @@
 package org.example.model.entities;
 
 public class Endereco {
+    private int idEndereco;
     private String apelido;
+    private TEndereco tipoEndereco;
     private String cep;
     private String numero;
     private String bairro;
@@ -13,8 +15,10 @@ public class Endereco {
     private Estado estado;
     private String observacoes;
 
-    public Endereco(String apelido, String cep, String numero, String bairro, String observacoes, TResidencia residencia, TLogradouro tLogradouro, Logradouro logradouro, Cidade cidade, Pais pais, Estado estado) {
+    public Endereco(int idEndereco, String apelido, TEndereco tipoEndereco, String cep, String numero, String bairro, String observacoes, TResidencia residencia, TLogradouro tLogradouro, Logradouro logradouro, Cidade cidade, Pais pais, Estado estado) {
+        this.idEndereco = idEndereco;
         this.apelido = apelido;
+        this.tipoEndereco = tipoEndereco;
         this.cep = cep;
         this.numero = numero;
         this.bairro = bairro;
@@ -30,12 +34,27 @@ public class Endereco {
     public Endereco() {
     }
 
+    public int getIdEndereco() {
+        return idEndereco;
+    }
+
+    public void setIdEndereco(int idEndereco) {
+        this.idEndereco = idEndereco;
+    }
+
     public String getApelido() {
         return apelido;
     }
 
     public void setApelido(String apelido) {
         this.apelido = apelido;
+    }
+
+    public TEndereco getTipoEndereco() {
+        return tipoEndereco;
+    }
+    public void setTipoEndereco(TEndereco tipoEndereco) {
+        this.tipoEndereco = tipoEndereco;
     }
 
     public String getCep() {

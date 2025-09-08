@@ -17,9 +17,10 @@ public class Cliente {
     private Genero genero;
     private List<Endereco> endereco = new ArrayList<>();
     private List<Cartao> cartao = new ArrayList<>();
+    private String senha;
     public Cliente() {
     }
-    public Cliente(Integer idCliente, String codigo, Boolean ativo, String nome, Date dataNascimento, String cpf, String email, String rank, Telefone telefone, Genero genero) {
+    public Cliente(Integer idCliente, String codigo, Boolean ativo, String nome, Date dataNascimento, String cpf, String email, String rank, Telefone telefone, Genero genero, String senha) {
         this.idCliente = idCliente;
         this.codigo = codigo;
         this.ativo = ativo;
@@ -30,6 +31,7 @@ public class Cliente {
         this.rank = rank;
         this.telefone = telefone;
         this.genero = genero;
+        this.senha = senha;
     }
 
     public int getIdCliente() {
@@ -134,6 +136,13 @@ public class Cliente {
 
     public void addCartao(Cartao cartao) {
         this.cartao.add(cartao);
+    }
+
+    public String getSenha() {
+        return senha;
+    }
+    public void setSenha(String senha) {
+        this.senha = senha;
     }
 }
 

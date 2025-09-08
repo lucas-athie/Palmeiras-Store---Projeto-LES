@@ -664,3 +664,33 @@ DROP TRIGGER IF EXISTS trg_check_user_addresses
     RETURN v_card_id;
   END;
   $$;
+
+  ALTER TABLE public.addresses
+    ALTER COLUMN add_number TYPE varchar;
+
+    -- Remover UNIQUE constraint de estados (nome, sigla, país)
+    ALTER TABLE public.states
+      DROP CONSTRAINT IF EXISTS uq_states_state_uf_country;
+
+    -- Remover UNIQUE constraint de cidades (nome, estado)
+    ALTER TABLE public.cities
+      DROP CONSTRAINT IF EXISTS uq_cities_city_state;
+
+    -- Remover UNIQUE constraint de tipos de logradouro
+    ALTER TABLE public.street_types
+      DROP CONSTRAINT IF EXISTS uq_street_types_type;
+
+    -- Remover UNIQUE constraint de ruas (logradouro, bairro, CEP, tipo)
+    ALTER TABLE public.streets
+      DROP CONSTRAINT IF EXISTS uq_streets_street_nb_type;
+
+    -- Remover UNIQUE constraint de tipos de residência
+    ALTER TABLE public.residence_types
+      DROP CONSTRAINT IF EXISTS uq_residence_types_type;
+
+      -- 1) Remover o trigger da tabela users_addresses
+      DROP TRIGGER IF EXISTS trg_check_user_addresses
+        ON public.users_addresses;
+
+      -- 2) Remover a função de trigger
+      DROP FUNCTION IF EXISTS public.check_user_addresses();

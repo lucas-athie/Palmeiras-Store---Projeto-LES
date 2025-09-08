@@ -3,9 +3,8 @@ package org.example.model.dao.impl;
 import org.example.model.dao.ClienteDao;
 import org.example.model.entities.*;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
+import java.sql.*;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -149,12 +148,15 @@ public class ClienteDaoJDBC implements ClienteDao {
                         endereco.setPais(new Pais(rs.getString("cou_country")));
                         endereco.setCep(rs.getString("str_zip"));
                         endereco.settLogradouro(TLogradouro.from(rs.getString("sty_street_type")));
+                        endereco.setLogradouro(new Logradouro(rs.getString("sty_street")));
+                        endereco.setBairro("Bairro " + rs.getString("str_neighborhood"));
+                        endereco.setTipoEndereco(TEndereco.from(rs.getString("uad_type")));
+
                         cliente.addEndereco(endereco);
                     }
                 }
             }
 
-            // retorna o único cliente encontrado ou null
             return cache.values().stream().findFirst().orElse(null);
 
         } catch (Exception e) {
@@ -165,7 +167,100 @@ public class ClienteDaoJDBC implements ClienteDao {
     }
 
     @Override
-    public List<Cliente> findByFilter(Cliente filtro) {
-        return List.of();
+    public List<Cliente> findByFilters(Map<String,String> filters) throws SQLException {
+        List<Cliente> lista = new ArrayList<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT\n" +
+                        "  u.usr_id,\n" +
+                        "  u.usr_code,\n" +
+                        "  u.usr_name,\n" +
+                        "  u.usr_email,\n" +
+                        "  u.usr_active,\n" +
+                        "  u.usr_birthday,\n" +
+                        "  u.usr_cpf,\n" +
+                        "  u.usr_phone_type,\n" +
+                        "  u.usr_phone_ddd,\n" +
+                        "  u.usr_phone_number,\n" +
+                        "  u.usr_ranking,\n" +
+                        "  g.gen_name AS genero,\n" +
+                        "  u.usr_createdAt,\n" +
+                        "  u.usr_updatedAt,\n" +
+                        "  u.usr_publishedAt\n" +
+                        "FROM public.users u\n" +
+                        "JOIN public.genders g ON g.gen_id = u.usr_gen_id\n" +
+                        "WHERE 1=1"
+        );
+
+        List<Object> params = new ArrayList<>();
+        if (filters.containsKey("usr_id")) {
+            sql.append(" AND u.usr_id = ?");
+            params.add(Integer.parseInt(filters.get("usr_id")));
+        }
+        if (filters.containsKey("usr_code")) {
+            sql.append(" AND u.usr_code = ?");
+            params.add(filters.get("usr_code"));
+        }
+        if (filters.containsKey("usr_name")) {
+            sql.append(" AND u.usr_name ILIKE ?");
+            params.add("%" + filters.get("usr_name") + "%");
+        }
+        if (filters.containsKey("usr_email")) {
+            sql.append(" AND u.usr_email = ?");
+            params.add(filters.get("usr_email"));
+        }
+        if (filters.containsKey("usr_cpf")) {
+            sql.append(" AND u.usr_cpf = ?");
+            params.add(filters.get("usr_cpf"));
+        }
+        if (filters.containsKey("usr_active")) {
+            sql.append(" AND u.usr_active = ?");
+            params.add(Boolean.parseBoolean(filters.get("usr_active")));
+        }
+        if (filters.containsKey("usr_ranking")) {
+            sql.append(" AND u.usr_ranking = ?");
+            params.add(filters.get("usr_ranking"));
+        }
+        if (filters.containsKey("genero")) {
+            sql.append(" AND g.gen_name = ?");
+            params.add(filters.get("genero"));
+        }
+
+        try (PreparedStatement st = conn.prepareStatement(sql.toString())) {
+            for (int i = 0; i < params.size(); i++) {
+                st.setObject(i + 1, params.get(i));
+            }
+
+            try (ResultSet rs = st.executeQuery()) {
+                while (rs.next()) {
+                    Cliente c = new Cliente();
+                    c.setIdCliente(   rs.getInt("usr_id"));
+                    c.setCodigo(      rs.getString("usr_code"));
+                    c.setNome(        rs.getString("usr_name"));
+                    c.setEmail(       rs.getString("usr_email"));
+                    c.setAtivo(       rs.getBoolean("usr_active"));
+                    c.setDataNascimento(rs.getDate("usr_birthday"));
+                    c.setCpf(         rs.getString("usr_cpf"));
+
+                    TTelefone tipo = TTelefone.valueOf(rs.getString("usr_phone_type"));
+                    c.setTelefone(new Telefone(
+                            rs.getString("usr_phone_ddd"),
+                            rs.getString("usr_phone_number"),
+                            tipo
+                    ));
+
+                    c.setRank(        rs.getString("usr_ranking"));
+                    c.setGenero(     Genero.valueOf(rs.getString("genero")));
+
+                    lista.add(c);
+                }
+            }
+        }
+
+        return lista;
     }
+
+
+
+
 }
