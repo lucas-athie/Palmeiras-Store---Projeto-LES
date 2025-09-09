@@ -1,49 +1,47 @@
-// ListaClientes.js
+// ../js/ListaClientes.js
 document.addEventListener("DOMContentLoaded", () => {
-  const tabela = document.getElementById("tabela-clientes");
-  const filtro = document.getElementById("filtro");
   const API_BASE = "http://localhost:8000";
+  const tabela = document.getElementById("tabela-clientes");
+  const params = new URLSearchParams(window.location.search);
+  const clienteIdQS = params.get("clienteId");
 
-  let clientesCache = [];
-
-  // Busca todos os clientes
-  async function fetchClientes() {
-    const resp = await fetch(`${API_BASE}/clientes`, {
-      method: "GET",
-      headers: { Accept: "application/json" },
+  // 0) injeta clienteId em todos os links da navbar
+  if (clienteIdQS) {
+    document.querySelectorAll("header nav a").forEach((link) => {
+      const href = link.getAttribute("href");
+      if (!href || href.startsWith("#") || href.startsWith("http")) return;
+      const [path] = href.split("?");
+      link.setAttribute(
+        "href",
+        `${path}?clienteId=${encodeURIComponent(clienteIdQS)}`
+      );
     });
-    if (!resp.ok) {
-      throw new Error(`Erro ${resp.status} ao buscar clientes`);
-    }
-    return resp.json();
   }
 
-  // Carrega e filtra a lista
-  async function carregarClientes(termo = "") {
+  // 1) Carrega TODA a lista de clientes (ignora qualquer filtro)
+  async function carregarClientes() {
     try {
-      let lista = await fetchClientes();
-      clientesCache = lista;
-
-      if (termo) {
-        const t = termo.toLowerCase();
-        lista = lista.filter((c) =>
-          Object.entries(c)
-            .filter(([k]) => k !== "senha")
-            .some(([_, v]) => String(v).toLowerCase().includes(t))
-        );
+      const resp = await fetch(`${API_BASE}/clientes`, {
+        method: "GET",
+        headers: { Accept: "application/json" },
+      });
+      if (!resp.ok) {
+        throw new Error(`Erro ${resp.status} ao buscar clientes`);
       }
-
+      const lista = await resp.json();
       renderTabela(lista);
     } catch (err) {
-      tabela.innerHTML = `<tr><td colspan="7">Erro ao carregar: ${err.message}</td></tr>`;
+      tabela.innerHTML = `
+        <tr><td colspan="6">Erro ao carregar clientes: ${err.message}</td></tr>`;
     }
   }
 
-  // Renderiza a tabela
+  // 2) Renderiza a tabela usando idCliente para todas as ações
   function renderTabela(lista) {
     tabela.innerHTML = "";
     if (!lista.length) {
-      tabela.innerHTML = `<tr><td colspan="7">Nenhum cliente encontrado.</td></tr>`;
+      tabela.innerHTML = `
+        <tr><td colspan="6">Nenhum cliente encontrado.</td></tr>`;
       return;
     }
 
@@ -62,7 +60,7 @@ document.addEventListener("DOMContentLoaded", () => {
         <td>${telefoneStr}</td>
         <td>${statusTxt}</td>
         <td>
-          <button onclick="editarCliente('${c.cpf}')">Editar</button>
+          <button onclick="editarCliente('${c.idCliente}')">Editar</button>
           <button onclick="excluirCliente('${c.idCliente}')">Excluir</button>
           <button onclick="alternarStatus('${c.idCliente}')">${btnStatus}</button>
           <button onclick="verTransacoes('${c.idCliente}')">Transações</button>
@@ -71,59 +69,54 @@ document.addEventListener("DOMContentLoaded", () => {
     });
   }
 
-  // Filtro em tempo real
-  if (filtro) {
-    filtro.addEventListener("input", () => {
-      carregarClientes(filtro.value.trim());
-    });
-  }
-
-  // Inicial
-  carregarClientes();
-
-  // Ações globais
-  window.editarCliente = (cpf) => {
-    // Armazena para edição ou redireciona
-    window.location.href = `EditarCliente.html?cpf=${cpf}`;
+  // 3) Funções globais de ação
+  window.editarCliente = (id) => {
+    // redireciona para edição, passando o id do cliente selecionado
+    window.location.href = `EditarCliente.html?clienteId=${encodeURIComponent(
+      id
+    )}`;
   };
 
-  window.excluirCliente = (id) => {
+  window.excluirCliente = async (id) => {
     if (!confirm("Tem certeza que deseja excluir este cliente?")) return;
-    fetch(`${API_BASE}/clientes/${id}`, { method: "DELETE" })
-      .then((r) => {
-        if (!r.ok) throw new Error(r.statusText);
-        carregarClientes(filtro.value.trim());
-      })
-      .catch((e) => alert("Erro ao excluir: " + e.message));
+    try {
+      const resp = await fetch(
+        `${API_BASE}/clientes/${encodeURIComponent(id)}`,
+        {
+          method: "DELETE",
+        }
+      );
+      if (!resp.ok) throw new Error(`Erro ${resp.status}`);
+      carregarClientes();
+    } catch (err) {
+      alert("Erro ao excluir cliente: " + err.message);
+    }
   };
 
   window.alternarStatus = async (id) => {
     try {
-      const cliente = clientesCache.find(
-        (c) => String(c.idCliente) === String(id)
-      );
-      if (!cliente) throw new Error("Cliente não encontrado");
+      // busca o cliente para inverter o campo 'ativo'
+      const r1 = await fetch(`${API_BASE}/clientes/${encodeURIComponent(id)}`);
+      if (!r1.ok) throw new Error("Falha ao buscar cliente");
+      const c = await r1.json();
+      c.ativo = !c.ativo;
 
-      // Inverter ativo
-      cliente.ativo = cliente.ativo === false ? true : false;
-
-      const resp = await fetch(`${API_BASE}/clientes/${id}`, {
+      const r2 = await fetch(`${API_BASE}/clientes/${encodeURIComponent(id)}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(cliente),
+        body: JSON.stringify(c),
       });
-      if (!resp.ok) {
-        const err = await resp.json().catch(() => ({}));
-        throw new Error(err.error || resp.statusText);
-      }
-
-      carregarClientes(filtro.value.trim());
-    } catch (e) {
-      alert("Erro ao alterar status: " + e.message);
+      if (!r2.ok) throw new Error(`Erro ${r2.status}`);
+      carregarClientes();
+    } catch (err) {
+      alert("Erro ao alterar status: " + err.message);
     }
   };
 
   window.verTransacoes = (id) => {
-    window.location.href = `Transacao.html?clienteId=${id}`;
+    window.location.href = `Transacao.html?clienteId=${encodeURIComponent(id)}`;
   };
+
+  // 4) Inicializa a lista
+  carregarClientes();
 });
