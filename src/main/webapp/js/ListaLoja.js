@@ -1,6 +1,38 @@
+// ../js/ListaLoja.js
+
 document.addEventListener("DOMContentLoaded", () => {
   const KEY_PRODUTOS = "produtosLoja";
   const KEY_CARRINHO = "carrinhoLoja";
+
+  // 1) extrai clienteId da URL
+  const params = new URLSearchParams(window.location.search);
+  const clienteId = params.get("clienteId");
+
+  // 2) injeta clienteId em todos os links da navbar
+  if (clienteId) {
+    document.querySelectorAll("header nav a").forEach((link) => {
+      const href = link.getAttribute("href");
+      // só reescreve links internos
+      if (!href || href.startsWith("#") || href.startsWith("http")) return;
+      const [path] = href.split("?");
+      link.setAttribute("href", `${path}?clienteId=${clienteId}`);
+    });
+  }
+
+  // 3) coloca um botão "Editar Perfil" acima da lista de produtos
+  if (clienteId) {
+    const btnEditar = document.createElement("button");
+    btnEditar.textContent = "Editar Meu Perfil";
+    btnEditar.className = "btn-editar-perfil";
+    btnEditar.addEventListener("click", () => {
+      window.location.href = `EditarCliente.html?clienteId=${clienteId}`;
+    });
+    // insere antes do grid
+    const main =
+      document.querySelector("main section#cliente") ||
+      document.querySelector("main");
+    main.insertBefore(btnEditar, document.getElementById("grid-produtos"));
+  }
 
   const grid = document.getElementById("grid-produtos");
   const contador = document.getElementById("contador");
@@ -32,30 +64,63 @@ document.addEventListener("DOMContentLoaded", () => {
 
   function seedProdutos() {
     return [
-      { id: "p001", nome: "Camisa Oficial 2025", categoria: "camisas", preco: 349.9, descricao: "Camisa oficial 2025 com tecido respirável e escudo bordado.", imagemUrl: "../img/produtos/camisa-2025.jpg", disponivel: true },
-      { id: "p002", nome: "Agasalho Treino", categoria: "agasalhos", preco: 499.0, descricao: "Agasalho completo para treino em dias frios.", imagemUrl: "../img/produtos/agasalho.jpg", disponivel: true },
-      { id: "p003", nome: "Boné Oficial", categoria: "acessorios", preco: 129.9, descricao: "Boné oficial ajustável, com logo bordado.", imagemUrl: "../img/produtos/bone.jpg", disponivel: true }
+      {
+        id: "p001",
+        nome: "Camisa Oficial 2025",
+        categoria: "camisas",
+        preco: 349.9,
+        descricao:
+          "Camisa oficial 2025 com tecido respirável e escudo bordado.",
+        imagemUrl: "../img/produtos/camisa-2025.jpg",
+        disponivel: true,
+      },
+      {
+        id: "p002",
+        nome: "Agasalho Treino",
+        categoria: "agasalhos",
+        preco: 499.0,
+        descricao: "Agasalho completo para treino em dias frios.",
+        imagemUrl: "../img/produtos/agasalho.jpg",
+        disponivel: true,
+      },
+      {
+        id: "p003",
+        nome: "Boné Oficial",
+        categoria: "acessorios",
+        preco: 129.9,
+        descricao: "Boné oficial ajustável, com logo bordado.",
+        imagemUrl: "../img/produtos/bone.jpg",
+        disponivel: true,
+      },
     ];
   }
 
   function formatarPreco(valor) {
-    return valor.toLocaleString("pt-BR", { style: "currency", currency: "BRL" });
+    return valor.toLocaleString("pt-BR", {
+      style: "currency",
+      currency: "BRL",
+    });
   }
 
   function renderProdutos(lista) {
     grid.innerHTML = "";
     if (!lista.length) {
-      grid.innerHTML = `<div style="grid-column:1/-1;text-align:center;color:#666;">Nenhum produto encontrado.</div>`;
+      grid.innerHTML = `
+        <div style="grid-column:1/-1;text-align:center;color:#666;">
+          Nenhum produto encontrado.
+        </div>`;
       contador.textContent = "0 produtos";
       return;
     }
 
-    lista.forEach(p => {
+    lista.forEach((p) => {
       const card = document.createElement("div");
       card.className = "card-produto";
       card.innerHTML = `
         <div class="card-header">
-          <img src="${p.imagemUrl}" alt="${p.nome}" onerror="this.style.display='none'">
+          <img src="${p.imagemUrl}" alt="${
+        p.nome
+      }" onerror="this.style.display='none'">
           <div>
             <p class="card-titulo">${p.nome}</p>
             <p class="card-categoria">${p.categoria}</p>
@@ -64,17 +129,26 @@ document.addEventListener("DOMContentLoaded", () => {
         <div class="card-descricao">${p.descricao}</div>
         <div class="card-footer">
           <span class="preco">${formatarPreco(p.preco)}</span>
-          <span class="status">${p.disponivel ? "Disponível" : "Indisponível"}</span>
+          <span class="status">${
+            p.disponivel ? "Disponível" : "Indisponível"
+          }</span>
         </div>
         <div class="btns">
-          <button class="btn-secundario" data-id="${p.id}" data-acao="detalhes">Ver detalhes</button>
-          <button data-id="${p.id}" data-acao="adicionar" ${!p.disponivel ? "disabled" : ""}>Adicionar ao carrinho</button>
-        </div>
-      `;
+          <button class="btn-secundario" data-id="${p.id}" data-acao="detalhes">
+            Ver detalhes
+          </button>
+          <button data-id="${p.id}" data-acao="adicionar" ${
+        !p.disponivel ? "disabled" : ""
+      }>
+            Adicionar ao carrinho
+          </button>
+        </div>`;
       grid.appendChild(card);
     });
 
-    contador.textContent = `${lista.length} produto${lista.length > 1 ? "s" : ""}`;
+    contador.textContent = `${lista.length} produto${
+      lista.length > 1 ? "s" : ""
+    }`;
   }
 
   function aplicarFiltros(produtos) {
@@ -83,8 +157,11 @@ document.addEventListener("DOMContentLoaded", () => {
     const min = parseFloat(precoMin.value) || null;
     const max = parseFloat(precoMax.value) || null;
 
-    let lista = produtos.filter(p => {
-      const matchBusca = !q || p.nome.toLowerCase().includes(q) || p.categoria.toLowerCase().includes(q);
+    let lista = produtos.filter((p) => {
+      const matchBusca =
+        !q ||
+        p.nome.toLowerCase().includes(q) ||
+        p.categoria.toLowerCase().includes(q);
       const matchCat = !cat || p.categoria === cat;
       const matchMin = min === null || p.preco >= min;
       const matchMax = max === null || p.preco <= max;
@@ -93,8 +170,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     if (ordenar.value === "preco_asc") lista.sort((a, b) => a.preco - b.preco);
     if (ordenar.value === "preco_desc") lista.sort((a, b) => b.preco - a.preco);
-    if (ordenar.value === "nome_asc") lista.sort((a, b) => a.nome.localeCompare(b.nome));
-    if (ordenar.value === "nome_desc") lista.sort((a, b) => b.nome.localeCompare(a.nome));
+    if (ordenar.value === "nome_asc")
+      lista.sort((a, b) => a.nome.localeCompare(b.nome));
+    if (ordenar.value === "nome_desc")
+      lista.sort((a, b) => b.nome.localeCompare(a.nome));
 
     return lista;
   }
@@ -129,15 +208,17 @@ document.addEventListener("DOMContentLoaded", () => {
     const acao = btn.getAttribute("data-acao");
 
     if (acao === "detalhes") {
-      window.location.href = `DetalheProduto.html?id=${encodeURIComponent(id)}`;
+      let url = `DetalheProduto.html?id=${encodeURIComponent(id)}`;
+      if (clienteId) url += `&clienteId=${encodeURIComponent(clienteId)}`;
+      window.location.href = url;
     }
 
     if (acao === "adicionar") {
       const produtos = getProdutos();
-      const prod = produtos.find(p => p.id === id);
+      const prod = produtos.find((p) => p.id === id);
       if (!prod) return;
       const carrinho = getCarrinho();
-      const idx = carrinho.findIndex(item => item.id === id);
+      const idx = carrinho.findIndex((item) => item.id === id);
       if (idx >= 0) {
         carrinho[idx].qtd += 1;
       } else {
@@ -145,7 +226,7 @@ document.addEventListener("DOMContentLoaded", () => {
       }
       setCarrinho(carrinho);
       estadoLista.textContent = `${prod.nome} adicionado ao carrinho!`;
-      setTimeout(() => estadoLista.textContent = "", 2000);
+      setTimeout(() => (estadoLista.textContent = ""), 2000);
     }
   });
 

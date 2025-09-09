@@ -139,6 +139,42 @@ public class ClienteService {
         }
     }
 
+    public List<Cliente> listarTodos() {
+        try (Connection conn = DB.getConnection()) {
+            ClienteDao dao = new ClienteDaoJDBC(conn);
+            List<Cliente> clientes = dao.findAll();
+
+            EnderecoDao enderecoDao = new EnderecoDaoJDBC(conn);
+            CartaoDao cartaoDao     = new CartaoDaoJDBC(conn);
+            for (Cliente cliente : clientes) {
+                int id = cliente.getIdCliente();
+                cliente.setEnderecos(enderecoDao.findByClienteId(id));
+                cliente.setCartoes(cartaoDao.findByClienteId(id));
+            }
+            return clientes;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao listar todos os clientes", e);
+        }
+    }
+
+    public List<Cliente> listarPorPesquisa(String termo) {
+        try (Connection conn = DB.getConnection()) {
+            ClienteDao dao = new ClienteDaoJDBC(conn);
+            List<Cliente> clientes = dao.findBySearch(termo);
+
+            EnderecoDao enderecoDao = new EnderecoDaoJDBC(conn);
+            CartaoDao cartaoDao     = new CartaoDaoJDBC(conn);
+            for (Cliente cliente : clientes) {
+                int id = cliente.getIdCliente();
+                cliente.setEnderecos(enderecoDao.findByClienteId(id));
+                cliente.setCartoes(cartaoDao.findByClienteId(id));
+            }
+            return clientes;
+        } catch (SQLException e) {
+            throw new RuntimeException("Erro ao buscar clientes por pesquisa", e);
+        }
+    }
+
     public List<Cliente> listarPorFiltros(Map<String, String> filtros) {
         try (Connection conn = DB.getConnection()) {
             ClienteDao dao = new ClienteDaoJDBC(conn);
@@ -146,13 +182,11 @@ public class ClienteService {
 
             EnderecoDao enderecoDao = new EnderecoDaoJDBC(conn);
             CartaoDao cartaoDao     = new CartaoDaoJDBC(conn);
-
             for (Cliente cliente : clientes) {
                 int id = cliente.getIdCliente();
                 cliente.setEnderecos(enderecoDao.findByClienteId(id));
                 cliente.setCartoes(cartaoDao.findByClienteId(id));
             }
-
             return clientes;
         } catch (SQLException e) {
             throw new RuntimeException("Erro ao listar clientes", e);
@@ -181,7 +215,6 @@ public class ClienteService {
                     || c.getTelefone().getNumero().isBlank()) {
                 vr.addError("Telefone é obrigatório");
             }
-
             if (c.getGenero() == null) {
                 vr.addError("Gênero é obrigatório");
             }

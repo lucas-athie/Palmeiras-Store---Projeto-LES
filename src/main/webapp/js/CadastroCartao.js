@@ -1,99 +1,170 @@
-document.addEventListener("DOMContentLoaded", function () {
-    const form = document.getElementById('form-cartao');
-    const tabela = document.querySelector('#tabela-cartoes tbody');
-    const btnSalvar = document.getElementById('btnSalvarCartao');
+// ../js/CadastroCartao.js
 
-    const clienteAtual = JSON.parse(localStorage.getItem('clienteAtual'));
+document.addEventListener("DOMContentLoaded", () => {
+  const API_BASE = "http://localhost:8000";
+  const params = new URLSearchParams(window.location.search);
+  const clienteId = params.get("clienteId");
+  const tabelaBody = document.querySelector("#tabela-cartoes tbody");
+  const form = document.getElementById("form-cartao");
+  const btnSalvar = document.getElementById("btnSalvarCartao");
+
+  // Inputs do formulário
+  const numeroInput = document.getElementById("numero-cartao");
+  const nomeInput = document.getElementById("nome-cartao");
+  const bandeiraSelect = document.getElementById("bandeira-cartao");
+  const cvvInput = document.getElementById("codigo-seguranca");
+  const preferencialCheck = document.getElementById("preferencial");
+
+  let clienteAtual = null;
+
+  if (!clienteId) {
+    alert("ID do cliente não informado na URL.");
+    return;
+  }
+
+
+  document.querySelectorAll("header nav a").forEach((link) => {
+    const href = link.getAttribute("href");
+    if (!href || href.startsWith("#") || href.startsWith("http")) return;
+    const [path] = href.split("?");
+    link.setAttribute("href", `${path}?clienteId=${clienteId}`);
+  });
+
+
+  async function fetchCliente() {
+    try {
+      const resp = await fetch(`${API_BASE}/clientes/${clienteId}`, {
+        headers: { Accept: "application/json" },
+      });
+      if (!resp.ok) throw new Error(`Status ${resp.status}`);
+      clienteAtual = await resp.json();
+      localStorage.setItem("clienteAtual", JSON.stringify(clienteAtual));
+      return clienteAtual;
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao carregar dados do cliente: " + err.message);
+    }
+  }
+
+
+  async function prefillTitular() {
     if (!clienteAtual) {
-        alert("Nenhum cliente selecionado.");
-        window.location.href = "ListaClientes.html";
-        return;
+      await fetchCliente();
+    }
+    if (clienteAtual) {
+      nomeInput.value = clienteAtual.nome;
+      nomeInput.readOnly = true;
+    }
+  }
+
+
+  async function fetchCartoes() {
+    if (!clienteAtual) {
+      await fetchCliente();
+    }
+    return clienteAtual && clienteAtual.cartoes ? clienteAtual.cartoes : [];
+  }
+
+
+  async function carregarCartoes() {
+    const lista = await fetchCartoes();
+    tabelaBody.innerHTML = "";
+
+    if (!lista.length) {
+      tabelaBody.innerHTML = `
+        <tr>
+          <td colspan="5" style="text-align:center">
+            Nenhum cartão cadastrado.
+          </td>
+        </tr>`;
+      return;
     }
 
-    const cpfCliente = clienteAtual.cpf?.replace(/\D/g, '');
+    lista.forEach((cartao) => {
+      const tr = document.createElement("tr");
+      tr.innerHTML = `
+        <td>${cartao.numero}</td>
+        <td>${cartao.titular}</td>
+        <td>${cartao.bandeira}</td>
+        <td>${cartao.principal ? "Sim" : "Não"}</td>
+        <td>
+          <button data-id="${cartao.id}">Excluir</button>
+        </td>`;
+      tabelaBody.appendChild(tr);
 
-    function getCartoes() {
-        return JSON.parse(localStorage.getItem('cartoes') || "[]")
-            .filter(c => c.cpfCliente.replace(/\D/g, '') === cpfCliente);
-    }
-
-    function setCartoes(cartoesCliente) {
-        let todos = JSON.parse(localStorage.getItem('cartoes') || "[]");
-        todos = todos.filter(c => c.cpfCliente.replace(/\D/g, '') !== cpfCliente);
-        todos.push(...cartoesCliente);
-        localStorage.setItem('cartoes', JSON.stringify(todos));
-    }
-
-    function carregarCartoes() {
-        const cartoes = getCartoes();
-        renderTabela(cartoes);
-    }
-
-    function renderTabela(cartoes) {
-        tabela.innerHTML = "";
-        if (!cartoes.length) {
-            tabela.innerHTML = `<tr><td colspan="5">Nenhum cartão cadastrado.</td></tr>`;
-            return;
-        }
-        cartoes.forEach((cartao) => {
-            const tr = document.createElement('tr');
-            tr.innerHTML = `
-                <td>**** **** **** ${cartao.numero.slice(-4)}</td>
-                <td>${cartao.nome}</td>
-                <td>${cartao.bandeira}</td>
-                <td>${cartao.preferencial ? '<span class="preferencial">Sim</span>' : 'Não'}</td>
-                <td class="acoes">
-                    <button onclick="definirPreferencial('${cartao.id}')">Preferencial</button>
-                    <button onclick="excluirCartao('${cartao.id}')">Excluir</button>
-                </td>
-            `;
-            tabela.appendChild(tr);
-        });
-    }
-
-    btnSalvar.addEventListener('click', () => {
-        const dados = {
-            id: Date.now().toString(),
-            cpfCliente: cpfCliente,
-            numero: document.getElementById('numero-cartao').value.trim(),
-            nome: document.getElementById('nome-cartao').value.trim(),
-            bandeira: document.getElementById('bandeira-cartao').value,
-            codigoSeguranca: document.getElementById('codigo-seguranca').value.trim(),
-            preferencial: document.getElementById('preferencial').checked
-        };
-
-        if (!dados.numero || !dados.nome || !dados.bandeira || !dados.codigoSeguranca) {
-            alert('Preencha todos os campos obrigatórios!');
-            return;
-        }
-
-        let cartoesCliente = getCartoes();
-
-        if (dados.preferencial) {
-            cartoesCliente.forEach(c => c.preferencial = false);
-        }
-
-        cartoesCliente.push(dados);
-        setCartoes(cartoesCliente);
-
-        carregarCartoes();
-        form.reset();
+      tr.querySelector("button").addEventListener("click", () => {
+        excluirCartao(cartao.id);
+      });
     });
+  }
 
-    window.excluirCartao = function (idCartao) {
-        if (!confirm("Deseja realmente excluir este cartão?")) return;
-        let cartoesCliente = getCartoes();
-        cartoesCliente = cartoesCliente.filter(c => c.id !== idCartao);
-        setCartoes(cartoesCliente);
-        carregarCartoes();
+
+  btnSalvar.addEventListener("click", async () => {
+    const payload = {
+      numero: numeroInput.value.replace(/\s+/g, ""),
+      titular: nomeInput.value.trim(),
+      bandeira: bandeiraSelect.value.toUpperCase(),
+      codigoSeguranca: cvvInput.value.trim(),
+      principal: preferencialCheck.checked,
     };
 
-    window.definirPreferencial = function (idCartao) {
-        let cartoesCliente = getCartoes();
-        cartoesCliente.forEach(c => c.preferencial = (c.id === idCartao));
-        setCartoes(cartoesCliente);
-        carregarCartoes();
-    };
 
-    carregarCartoes();
+    const required = ["numero", "titular", "bandeira", "codigoSeguranca"];
+    for (const field of required) {
+      if (!payload[field]) {
+        alert(`Preencha o campo: ${field}`);
+        return;
+      }
+    }
+
+    try {
+      const resp = await fetch(`${API_BASE}/clientes/${clienteId}/cartoes`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+        },
+        body: JSON.stringify(payload),
+      });
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || `Status ${resp.status}`);
+      }
+      alert("Cartão cadastrado com sucesso!");
+      form.reset();
+      await fetchCliente(); // atualiza clienteAtual com o novo cartão
+      carregarCartoes();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao cadastrar cartão: " + err.message);
+    }
+  });
+
+  async function excluirCartao(cartaoId) {
+    if (!confirm("Deseja realmente excluir este cartão?")) return;
+    try {
+      const resp = await fetch(
+        `${API_BASE}/clientes/${clienteId}/cartoes/${cartaoId}`,
+        {
+          method: "DELETE",
+          headers: { Accept: "application/json" },
+        }
+      );
+      if (!resp.ok) {
+        const err = await resp.json().catch(() => ({}));
+        throw new Error(err.error || `Status ${resp.status}`);
+      }
+
+      clienteAtual.cartoes = clienteAtual.cartoes.filter(
+        (c) => c.id !== cartaoId
+      );
+      carregarCartoes();
+    } catch (err) {
+      console.error(err);
+      alert("Erro ao excluir cartão: " + err.message);
+    }
+  }
+
+
+  prefillTitular().then(carregarCartoes);
 });

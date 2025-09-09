@@ -1,129 +1,190 @@
+<!-- ../html/EditarCliente.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Editar Cliente</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
-</head>
-<body>
-
-<header>
-    <div class="header-left">
+    <link rel="stylesheet" href="../css/CadastroCliente.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
         <h1>Palmeiras Store</h1>
         <nav aria-label="Seção do sistema">
-            <ul>
-                <li>
-                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
-                    <ul class="submenu">
-                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
-                        <li><a href="CadastroCliente.html">Cadastro</a></li>
-                        <li><a href="EditarCliente.html">Editar</a></li>
-                        <li><a href="CadastroEndereco.html">Endereço</a></li>
-                        <li><a href="Transacao.html">Transação</a></li>
-                        <li><a href="Carrinho.html">Carrinho</a></li>
-                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
-                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
-                        <li><a href="ListaLoja.html">Loja</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="#" id="tab-admin" class="menu-principal">Admin</a>
-                    <ul class="submenu">
-                        <li><a href="ListaClientes.html">Lista</a></li>
-                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
-                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
-                    </ul>
-                </li>
-            </ul>
+          <ul>
+            <li>
+              <a
+                href="#"
+                id="tab-cliente"
+                class="menu-principal"
+                aria-current="page"
+                >Cliente</a
+              >
+              <ul class="submenu">
+                <li><a href="CadastroCartao.html">Cartões</a></li>
+                <li><a href="CadastroCliente.html">Cadastro</a></li>
+                <li><a href="EditarCliente.html">Editar</a></li>
+                <li><a href="CadastroEndereco.html">Endereço</a></li>
+                <li><a href="Transacao.html">Transação</a></li>
+                <li><a href="Carrinho.html">Carrinho</a></li>
+                <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                <li><a href="RecomendacaoIA.html">Recomendações</a></li>
+                <li><a href="ListaLoja.html">Loja</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#" id="tab-admin" class="menu-principal">Admin</a>
+              <ul class="submenu">
+                <li><a href="ListaClientes.html">Lista</a></li>
+                <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
+              </ul>
+            </li>
+          </ul>
         </nav>
-    </div>
-    <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
-</header>
-<main>
-    <section id="cliente">
+      </div>
+      <img
+        src="../img/Palmeiras_logo.svg.webp"
+        alt="Símbolo do Palmeiras"
+        class="logo"
+      />
+    </header>
+
+    <main>
+      <section id="cliente">
         <h2>Editar Cliente</h2>
 
         <form id="form-cliente">
-            <div class="form-group full-width">
-                <label for="nome">Nome Completo:</label>
-                <input type="text" id="nome" name="nome" placeholder="Digite o nome completo" required>
-            </div>
+          <div class="form-group full-width">
+            <label for="nome">Nome Completo:</label>
+            <input
+              type="text"
+              id="nome"
+              name="nome"
+              placeholder="Digite o nome completo"
+              required
+            />
+          </div>
 
-            <div class="form-group">
-                <label for="cpf">CPF:</label>
-                <input type="text" id="cpf" name="cpf" placeholder="Digite o CPF" maxlength="14" required>
-            </div>
+          <div class="form-group">
+            <label for="cpf">CPF:</label>
+            <input
+              type="text"
+              id="cpf"
+              name="cpf"
+              placeholder="Digite o CPF"
+              maxlength="14"
+              required
+            />
+          </div>
 
-            <div class="form-group">
-                <label for="genero">Gênero:</label>
-                <select id="genero" name="genero" required>
-                    <option value="" disabled selected>Selecione</option>
-                    <option value="masculino">Masculino</option>
-                    <option value="feminino">Feminino</option>
-                    <option value="outros">Outros</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="genero">Gênero:</label>
+            <select id="genero" name="genero" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="masculino">Masculino</option>
+              <option value="feminino">Feminino</option>
+              <option value="outros">Outros</option>
+            </select>
+          </div>
 
-            <div class="form-group">
-                <label for="senha">Senha:</label>
-                <input type="password" id="senha" name="senha" placeholder="Digite sua senha" required>
-            </div>
+          <div class="form-group">
+            <label for="senha">Senha:</label>
+            <input
+              type="password"
+              id="senha"
+              name="senha"
+              placeholder="Digite sua senha"
+            />
+          </div>
 
-            <div class="form-group">
-                <label for="confirmar-senha">Confirmar Senha:</label>
-                <input type="password" name="confirmar-senha" id="confirmar-senha" placeholder="Repita a senha" required>
-            </div>
+          <div class="form-group">
+            <label for="confirmar-senha">Confirmar Senha:</label>
+            <input
+              type="password"
+              id="confirmar-senha"
+              name="confirmar-senha"
+              placeholder="Repita a senha"
+            />
+          </div>
 
-            <div class="form-group">
-                <label for="data-nascimento">Data de Nascimento:</label>
-                <input type="date" name="data-nascimento" id="data-nascimento" required>
-            </div>
+          <div class="form-group">
+            <label for="data-nascimento">Data de Nascimento:</label>
+            <input
+              type="date"
+              id="data-nascimento"
+              name="data-nascimento"
+              required
+            />
+          </div>
 
-            <div class="form-group">
-                <label for="tipo-telefone">Tipo de Telefone:</label>
-                <select name="tipo-telefone" id="tipo-telefone" required>
-                    <option value="">Selecione</option>
-                    <option value="fixo">Fixo</option>
-                    <option value="movel">Móvel</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="tipo-telefone">Tipo de Telefone:</label>
+            <select id="tipo-telefone" name="tipo-telefone" required>
+              <option value="" disabled selected>Selecione</option>
+              <option value="Fixo">Fixo</option>
+              <option value="Celular">Celular</option>
+            </select>
+          </div>
 
-            <div class="form-group">
-                <label for="telefone">Telefone (com DDD):</label>
-                <input type="tel" id="telefone" name="telefone" placeholder="(11) 99999-9999" pattern="\(\d{2}\)\s?\d{4,5}-\d{4}" required>
-            </div>
+          <div class="form-group">
+            <label for="telefone">Telefone (com DDD):</label>
+            <input
+              type="tel"
+              id="telefone"
+              name="telefone"
+              placeholder="(11) 99999-9999"
+              pattern="\(\d{2}\)\s?\d{4,5}-\d{4}"
+              required
+            />
+          </div>
 
-            <div class="form-group full-width">
-                <label for="email">E-mail</label>
-                <input type="email" id="email" name="email" placeholder="seuemail@exemplo.com" required>
-            </div>
+          <div class="form-group full-width">
+            <label for="email">E-mail:</label>
+            <input
+              type="email"
+              id="email"
+              name="email"
+              placeholder="seuemail@exemplo.com"
+              required
+            />
+          </div>
 
-            <div class="form-group full-width">
-                <label for="obs">Observação:</label>
-                <input type="text" id="obs" name="obs" placeholder="Digite a Observação">
-            </div>
+          <div class="form-group full-width">
+            <label for="obs">Observação:</label>
+            <input
+              type="text"
+              id="obs"
+              name="obs"
+              placeholder="Digite a Observação"
+            />
+          </div>
 
-            <div class="form-group">
-                <label for="ativo">Status:</label>
-                <select id="ativo" name="ativo">
-                    <option value="true">Ativo</option>
-                    <option value="false">Inativo</option>
-                </select>
-            </div>
+          <div class="form-group">
+            <label for="ativo">Status:</label>
+            <select id="ativo" name="ativo">
+              <option value="true">Ativo</option>
+              <option value="false">Inativo</option>
+            </select>
+          </div>
 
-            <div class="form-group full-width">
-                <button type="button" id="btnSalvar">Salvar Alterações</button>
-                <button type="button" id="btnExcluir" style="background-color: red; color: white;">Excluir</button>
-                <button type="button" id="btnEnderecos">Endereços</button>
-                <button type="button" id="btnCartao">Cartão</button>
-            </div>
+          <div class="form-group full-width buttons-group">
+            <button type="button" id="btnSalvar">Salvar Alterações</button>
+            <button
+              type="button"
+              id="btnExcluir"
+              style="background-color: red; color: white"
+            >
+              Excluir
+            </button>
+            <button type="button" id="btnEnderecos">Endereços</button>
+            <button type="button" id="btnCartao">Cartão</button>
+          </div>
         </form>
-    </section>
-</main>
+      </section>
+    </main>
 
-<script src="../js/EditarCliente.js"></script>
-
-</body>
+    <script src="../js/EditarCliente.js"></script>
+  </body>
 </html>

@@ -9,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.regex.Pattern;
 
-
 public class ClienteValidator implements ValidationStrategy<Cliente> {
 
     private static final Pattern EMAIL =
@@ -55,7 +54,8 @@ public class ClienteValidator implements ValidationStrategy<Cliente> {
         String senha = cliente.getSenha();
         if (isBlank(senha) || !SENHA_FORTE.matcher(senha).matches()) {
             result.addError(
-                    "Senha deve ter ≥8 caracteres, letras maiúsculas, minúsculas e símbolos");
+                    "Senha deve ter ≥8 caracteres, letras maiúsculas, minúsculas e símbolos"
+            );
         }
 
         if (cliente.getTelefone() == null) {
@@ -67,8 +67,10 @@ public class ClienteValidator implements ValidationStrategy<Cliente> {
         }
 
         List<Endereco> enderecos = cliente.getEnderecos();
-        if (enderecos == null || enderecos.isEmpty()) {
-            result.addError("É necessário informar pelo menos um endereço");
+        if (enderecos == null || enderecos.size() != 2) {
+            result.addError(
+                    "É necessário informar dois endereços: um de entrega e um de cobrança"
+            );
         } else {
             boolean temEntrega  = enderecos.stream()
                     .anyMatch(e -> e.getTipoEndereco() == TEndereco.ENTREGA);
@@ -76,10 +78,10 @@ public class ClienteValidator implements ValidationStrategy<Cliente> {
                     .anyMatch(e -> e.getTipoEndereco() == TEndereco.COBRANCA);
 
             if (!temEntrega) {
-                result.addError("É necessário informar pelo menos um endereço de entrega");
+                result.addError("É necessário informar um endereço de entrega");
             }
             if (!temCobranca) {
-                result.addError("É necessário informar pelo menos um endereço de cobrança");
+                result.addError("É necessário informar um endereço de cobrança");
             }
 
             for (Endereco e : enderecos) {

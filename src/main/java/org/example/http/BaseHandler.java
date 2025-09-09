@@ -18,9 +18,9 @@ import java.io.OutputStream;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
-
 
 public abstract class BaseHandler implements HttpHandler {
 
@@ -65,20 +65,22 @@ public abstract class BaseHandler implements HttpHandler {
     public final void handle(HttpExchange exchange) throws IOException {
         try {
             addCORSHeaders(exchange);
-
             if ("OPTIONS".equalsIgnoreCase(exchange.getRequestMethod())) {
                 exchange.sendResponseHeaders(204, -1);
                 return;
             }
-
             handleRequest(exchange);
-
         } catch (IOException ioe) {
             throw ioe;
         } catch (Exception e) {
             sendError(exchange, 500, e.getMessage());
         }
     }
+
+    /**
+     * Implementado pelo controlador (ex: CntrlCliente) para tratar GET/POST/PUT/DELETE.
+     */
+    protected abstract void handleRequest(HttpExchange exchange) throws IOException, SQLException;
 
     protected void addCORSHeaders(HttpExchange exchange) {
         var headers = exchange.getResponseHeaders();
@@ -97,17 +99,20 @@ public abstract class BaseHandler implements HttpHandler {
         return gson.fromJson(readBody(exchange), clazz);
     }
 
-    protected void writeJson(HttpExchange exchange, int statusCode, Object obj) throws IOException {
+    protected void writeJson(HttpExchange exchange, int statusCode, Object obj)
+            throws IOException {
         String json  = gson.toJson(obj);
         byte[] bytes = json.getBytes(StandardCharsets.UTF_8);
-        exchange.getResponseHeaders().set("Content-Type", "application/json; charset=utf-8");
+        exchange.getResponseHeaders()
+                .set("Content-Type", "application/json; charset=utf-8");
         exchange.sendResponseHeaders(statusCode, bytes.length);
         try (OutputStream os = exchange.getResponseBody()) {
             os.write(bytes);
         }
     }
 
-    protected void sendError(HttpExchange exchange, int statusCode, String message) throws IOException {
+    protected void sendError(HttpExchange exchange, int statusCode, String message)
+            throws IOException {
         Map<String,String> error = Collections.singletonMap("error", message);
         writeJson(exchange, statusCode, error);
     }
@@ -128,28 +133,28 @@ public abstract class BaseHandler implements HttpHandler {
     }
 
     protected List<String> getPathSegments(HttpExchange exchange) {
-        return Arrays.stream(exchange.getRequestURI().getPath().split("/"))
+        return Arrays.stream(
+                        exchange.getRequestURI().getPath().split("/")
+                )
                 .filter(s -> !s.isBlank())
                 .collect(Collectors.toList());
     }
 
     protected Integer extractId(HttpExchange exchange) throws IOException {
         List<String> parts = getPathSegments(exchange);
-
         if (parts.size() >= 2) {
             return parseIntOr400(parts.get(1), exchange);
         }
-
         Map<String,String> qs = splitQuery(exchange.getRequestURI());
         if (qs.containsKey("usr_id")) {
             return parseIntOr400(qs.get("usr_id"), exchange);
         }
-
         sendError(exchange, 400, "ID não especificado");
         return null;
     }
 
-    protected Integer parseIntOr400(String raw, HttpExchange exchange) throws IOException {
+    protected Integer parseIntOr400(String raw, HttpExchange exchange)
+            throws IOException {
         try {
             return Integer.valueOf(raw);
         } catch (NumberFormatException e) {
@@ -157,6 +162,4 @@ public abstract class BaseHandler implements HttpHandler {
             return null;
         }
     }
-
-    protected abstract void handleRequest(HttpExchange exchange) throws IOException;
 }

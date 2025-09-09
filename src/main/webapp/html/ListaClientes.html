@@ -1,74 +1,87 @@
+<!-- ListaClientes.html -->
 <!DOCTYPE html>
 <html lang="pt-BR">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Lista de Clientes</title>
-    <link rel="stylesheet" href="../css/CadastroCliente.css">
-    <style>
-        
-    </style>
-</head>
-<body>
-
-<header>
-    <div class="header-left">
+    <link rel="stylesheet" href="../css/CadastroCliente.css" />
+  </head>
+  <body>
+    <header>
+      <div class="header-left">
         <h1>Palmeiras Store</h1>
         <nav aria-label="Seção do sistema">
-            <ul>
-                <li>
-                    <a href="#" id="tab-cliente" class="menu-principal" aria-current="page">Cliente</a>
-                    <ul class="submenu">
-                        <li><a href="CadastroCartao.html" aria-current="page">Cartões</a></li>
-                        <li><a href="CadastroCliente.html">Cadastro</a></li>
-                        <li><a href="EditarCliente.html">Editar</a></li>
-                        <li><a href="CadastroEndereco.html">Endereço</a></li>
-                        <li><a href="Transacao.html">Transação</a></li>
-                        <li><a href="Carrinho.html">Carrinho</a></li>
-                        <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
-                        <li><a href="RecomendacaoIA.html">Recomendações</a></li>
-                        <li><a href="ListaLoja.html">Loja</a></li>
-                    </ul>
-                </li>
-
-                <li>
-                    <a href="#" id="tab-admin" class="menu-principal">Admin</a>
-                    <ul class="submenu">
-                        <li><a href="ListaClientes.html">Lista</a></li>
-                        <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
-                        <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
-                    </ul>
-                </li>
-            </ul>
+          <ul>
+            <li>
+              <a
+                href="#"
+                id="tab-cliente"
+                class="menu-principal"
+                aria-current="page"
+              >
+                Cliente
+              </a>
+              <ul class="submenu">
+                <li><a href="CadastroCartao.html">Cartões</a></li>
+                <li><a href="CadastroCliente.html">Cadastro</a></li>
+                <li><a href="EditarCliente.html">Editar</a></li>
+                <li><a href="CadastroEndereco.html">Endereço</a></li>
+                <li><a href="Transacao.html">Transação</a></li>
+                <li><a href="Carrinho.html">Carrinho</a></li>
+                <li><a href="FinalizarCompra.html">Finalizar Compra</a></li>
+                <li><a href="RecomendacaoIA.html">Recomendações</a></li>
+                <li><a href="ListaLoja.html">Loja</a></li>
+              </ul>
+            </li>
+            <li>
+              <a href="#" id="tab-admin" class="menu-principal">Admin</a>
+              <ul class="submenu">
+                <li><a href="ListaClientes.html">Lista</a></li>
+                <li><a href="TransacaoAdmin.html">Lista de Transações</a></li>
+                <li><a href="HistoricoVendas.html">Histórico de Vendas</a></li>
+              </ul>
+            </li>
+          </ul>
         </nav>
-    </div>
-    <img src="../img/Palmeiras_logo.svg.webp" alt="Símbolo do Palmeiras" class="logo">
-</header>
+      </div>
+      <img
+        src="../img/Palmeiras_logo.svg.webp"
+        alt="Símbolo do Palmeiras"
+        class="logo"
+      />
+    </header>
 
-<main>
-    <section>
+    <main>
+      <section>
         <h2>Clientes Cadastrados</h2>
 
         <label for="filtro">🔍 Buscar cliente:</label>
-        <input type="text" id="filtro" placeholder="Digite qualquer informação..." style="width: 100%; padding: 8px; margin-bottom: 10px;">
+        <input
+          type="text"
+          id="filtro"
+          placeholder="Digite qualquer informação..."
+          style="width: 100%; padding: 8px; margin-bottom: 10px"
+        />
 
         <table border="1" cellpadding="8">
-            <thead>
-                <tr>
-                    <th>Nome</th>
-                    <th>CPF</th>
-                    <th>E-mail</th>
-                    <th>Telefone</th>
-                    <th>Status</th>
-                    <th>Ações</th>
-                </tr>
-            </thead>
-            <tbody id="tabela-clientes">
-            </tbody>
+          <thead>
+            <tr>
+              <th>Nome</th>
+              <th>CPF</th>
+              <th>E-mail</th>
+              <th>Telefone</th>
+              <th>Status</th>
+              <th>Ações</th>
+            </tr>
+          </thead>
+          <tbody id="tabela-clientes">
+            <!-- Preenchido dinamicamente -->
+          </tbody>
         </table>
-    </section>
-</main>
+      </section>
+    </main>
 
-<script src="../js/ListaCliente.js"></script>
-</body>
+    <script src="../js/ListaClientes.js"></script>
+  </body>
 </html>
