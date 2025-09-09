@@ -5,10 +5,7 @@ import org.example.model.entities.Cliente;
 
 import java.util.List;
 
-/**
- * Strategy para calcular o score numérico de um cliente
- * com base no histórico de compras.
- */
+
 public class CalcularRank implements RankStrategy {
 
     @Override
@@ -28,7 +25,7 @@ public class CalcularRank implements RankStrategy {
         //double media     = totalGasto / totalCompras;
         //double baseScore = media * Math.sqrt(totalCompras);
 
-        // TODO: adicionar cálculo de score baseado em detalhes de produtos dos pedidos
+        // adicionar cálculo de score baseado em detalhes de produtos dos pedidos
 
         //return baseScore;
     }

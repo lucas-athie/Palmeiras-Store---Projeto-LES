@@ -1,10 +1,21 @@
 package org.example.model.entities;
 
+import com.google.gson.annotations.SerializedName;
+
 public enum Bandeira {
+    @SerializedName("Mastercard")
     MASTERCARD("Mastercard"),
+
+    @SerializedName("Visa")
     VISA("Visa"),
+
+    @SerializedName("Amex")
     AMEX("Amex"),
+
+    @SerializedName("Elo")
     ELO("Elo"),
+
+    @SerializedName("Hipercard")
     HIPERCARD("Hipercard");
 
     private final String label;
@@ -28,7 +39,8 @@ public enum Bandeira {
         }
         String trimmed = dbValue.trim();
         for (Bandeira b : values()) {
-            if (b.label.equalsIgnoreCase(trimmed) || b.name().equalsIgnoreCase(trimmed)) {
+            if (b.label.equalsIgnoreCase(trimmed)
+                    || b.name().equalsIgnoreCase(trimmed)) {
                 return b;
             }
         }

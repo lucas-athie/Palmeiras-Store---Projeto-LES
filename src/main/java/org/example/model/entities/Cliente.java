@@ -3,35 +3,46 @@ package org.example.model.entities;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
+
 
 public class Cliente {
     private int idCliente;
     private String codigo;
-    private Boolean ativo;
+    private boolean ativo;
     private String nome;
     private Date dataNascimento;
     private String cpf;
     private String email;
-    private String rank;
     private Telefone telefone;
     private Genero genero;
-    private List<Endereco> endereco = new ArrayList<>();
-    private List<Cartao> cartao = new ArrayList<>();
+    private List<Endereco> enderecos = new ArrayList<>();
+    private List<Cartao> cartoes    = new ArrayList<>();
     private String senha;
+
     public Cliente() {
     }
-    public Cliente(Integer idCliente, String codigo, Boolean ativo, String nome, Date dataNascimento, String cpf, String email, String rank, Telefone telefone, Genero genero, String senha) {
-        this.idCliente = idCliente;
-        this.codigo = codigo;
-        this.ativo = ativo;
-        this.nome = nome;
+
+    public Cliente(int idCliente,
+                   String codigo,
+                   boolean ativo,
+                   String nome,
+                   Date dataNascimento,
+                   String cpf,
+                   String email,
+                   Telefone telefone,
+                   Genero genero,
+                   String senha) {
+        this.idCliente      = idCliente;
+        this.codigo         = codigo;
+        this.ativo          = ativo;
+        this.nome           = nome;
         this.dataNascimento = dataNascimento;
-        this.cpf = cpf;
-        this.email = email;
-        this.rank = rank;
-        this.telefone = telefone;
-        this.genero = genero;
-        this.senha = senha;
+        this.cpf            = cpf;
+        this.email          = email;
+        this.telefone       = telefone;
+        this.genero         = genero;
+        this.senha          = senha;
     }
 
     public int getIdCliente() {
@@ -50,11 +61,11 @@ public class Cliente {
         this.codigo = codigo;
     }
 
-    public Boolean getAtivo() {
+    public boolean isAtivo() {
         return ativo;
     }
 
-    public void setAtivo(Boolean ativo) {
+    public void setAtivo(boolean ativo) {
         this.ativo = ativo;
     }
 
@@ -90,14 +101,6 @@ public class Cliente {
         this.email = email;
     }
 
-    public String getRank() {
-        return rank;
-    }
-
-    public void setRank(String rank) {
-        this.rank = rank;
-    }
-
     public Telefone getTelefone() {
         return telefone;
     }
@@ -114,37 +117,65 @@ public class Cliente {
         this.genero = genero;
     }
 
-    public List<Endereco> getEndereco() {
-        return endereco;
+    public List<Endereco> getEnderecos() {
+        return enderecos;
     }
 
-    public void setEndereco(List<Endereco> endereco) {
-        this.endereco = endereco;
+    public void setEnderecos(List<Endereco> enderecos) {
+        this.enderecos = enderecos;
     }
 
-    public List<Cartao> getCartao() {
-        return cartao;
+    public List<Cartao> getCartoes() {
+        return cartoes;
     }
 
-    public void setCartao(List<Cartao> cartao) {
-        this.cartao = cartao;
-    }
-
-    public void addEndereco(Endereco endereco) {
-        this.endereco.add(endereco);
-    }
-
-    public void addCartao(Cartao cartao) {
-        this.cartao.add(cartao);
+    public void setCartoes(List<Cartao> cartoes) {
+        this.cartoes = cartoes;
     }
 
     public String getSenha() {
         return senha;
     }
+
     public void setSenha(String senha) {
         this.senha = senha;
     }
+
+    public void addEndereco(Endereco endereco) {
+        this.enderecos.add(endereco);
+    }
+
+    public void addCartao(Cartao cartao) {
+        this.cartoes.add(cartao);
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Cliente)) return false;
+        Cliente that = (Cliente) o;
+        return idCliente == that.idCliente;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idCliente);
+    }
+
+    @Override
+    public String toString() {
+        return "Cliente{" +
+                "idCliente=" + idCliente +
+                ", codigo='" + codigo + '\'' +
+                ", ativo=" + ativo +
+                ", nome='" + nome + '\'' +
+                ", dataNascimento=" + dataNascimento +
+                ", cpf='" + cpf + '\'' +
+                ", email='" + email + '\'' +
+                ", telefone=" + telefone +
+                ", genero=" + genero +
+                ", enderecos=" + enderecos +
+                ", cartoes=" + cartoes +
+                '}';
+    }
 }
-
-
-

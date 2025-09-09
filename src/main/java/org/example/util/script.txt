@@ -694,3 +694,52 @@ DROP TRIGGER IF EXISTS trg_check_user_addresses
 
       -- 2) Remover a função de trigger
       DROP FUNCTION IF EXISTS public.check_user_addresses();
+
+      -- 1) Remova o trigger que chama a função set_updated_at()
+      DROP TRIGGER IF EXISTS trg_users_updatedat
+        ON public.users;
+
+      -- 2) Agora sim, remova a função sem erros de dependência
+      DROP FUNCTION IF EXISTS public.set_updated_at();
+
+      -- Se preferir tudo de uma vez, use CASCADE (apaga também o trigger):
+      DROP FUNCTION IF EXISTS public.set_updated_at() CASCADE;
+
+      CREATE OR REPLACE FUNCTION public.get_or_create_city(
+        p_city   text,
+        p_sta_id bigint
+      ) RETURNS bigint
+      LANGUAGE plpgsql AS
+      $$
+      DECLARE
+        cid bigint;
+      BEGIN
+        INSERT INTO public.cities(cit_city, cit_sta_id)
+          VALUES (p_city, p_sta_id)
+          ON CONFLICT (cit_city, cit_sta_id) DO NOTHING
+          RETURNING cit_id INTO cid;
+
+        IF cid IS NULL THEN
+          SELECT cit_id
+            INTO cid
+            FROM public.cities
+           WHERE cit_city   = p_city
+             AND cit_sta_id = p_sta_id;
+        END IF;
+
+        RETURN cid;
+      END;
+      $$;
+
+      ALTER TABLE public.cities
+        ADD CONSTRAINT uq_cities_city_state
+          UNIQUE (cit_city, cit_sta_id);
+
+ALTER TABLE public.cards
+  DROP COLUMN car_valid;
+
+  ALTER TABLE states
+  ALTER COLUMN sta_state DROP NOT NULL;
+
+ALTER TABLE addresses_names
+ALTER COLUMN ana_name DROP NOT NULL;

@@ -1,99 +1,112 @@
 package org.example.controller;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 import com.sun.net.httpserver.HttpExchange;
-import org.example.db.DB;
+import org.example.config.Database;
 import org.example.http.BaseHandler;
 import org.example.model.dao.CartaoDao;
 import org.example.model.dao.DaoFactory;
 import org.example.model.entities.Cartao;
+import org.example.service.strategy.BandeiraValidator;
+import org.example.service.strategy.CartaoValidator;
 
 import java.io.IOException;
-import java.net.URI;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 public class CntrlCartao extends BaseHandler {
-    private final Gson gson = new Gson();
+
+    private final Gson gson = new GsonBuilder().create();
+    private final CartaoValidator validator = new CartaoValidator();
 
     @Override
-    protected void handleRequest(HttpExchange ex) throws IOException {
-        try {
-            if ("OPTIONS".equalsIgnoreCase(ex.getRequestMethod())) {
-                ex.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-                ex.getResponseHeaders().add("Access-Control-Allow-Methods", "GET,POST,DELETE,OPTIONS");
-                ex.getResponseHeaders().add("Access-Control-Allow-Headers", "Content-Type");
-                ex.sendResponseHeaders(204, -1);
+    protected void handleRequest(HttpExchange exchange) throws IOException {
+
+        exchange.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
+
+        String method = exchange.getRequestMethod().toUpperCase();
+        List<String> parts = getPathSegments(exchange);
+
+        if (parts.size() < 3
+                || !"clientes".equals(parts.get(0))
+                || !"cartoes".equals(parts.get(2))) {
+            exchange.sendResponseHeaders(404, -1);
+            return;
+        }
+
+        Integer clienteId = parseIntOr400(parts.get(1), exchange);
+        if (clienteId == null) return;
+
+        try (Connection conn = Database.getConnection()) {
+            CartaoDao dao = DaoFactory.createCartaoDao(conn);
+
+            if ("GET".equals(method) && parts.size() == 3) {
+                List<Cartao> lista = dao.findByClienteId(clienteId);
+                writeJson(exchange, 200, lista);
                 return;
             }
 
-            String method = ex.getRequestMethod();
-            Map<String, String> query = splitQuery(ex.getRequestURI());
-            String cid = query.get("clienteId");
-            if (cid == null) {
-                writeJson(ex, 400, "{\"error\":\"clienteId is required\"}");
+            if ("GET".equals(method) && parts.size() == 4) {
+                Integer cartaoId = parseIntOr400(parts.get(3), exchange);
+                if (cartaoId == null) return;
+
+                List<Cartao> lista = dao.findByClienteId(clienteId);
+                Cartao found = lista.stream()
+                        .filter(c -> c.getId() == cartaoId)
+                        .findFirst()
+                        .orElse(null);
+
+                if (found == null) {
+                    exchange.sendResponseHeaders(404, -1);
+                } else {
+                    writeJson(exchange, 200, found);
+                }
                 return;
             }
-            int clienteId = Integer.parseInt(cid);
 
-            try (Connection conn = DB.getConnection()) {
-                CartaoDao dao = DaoFactory.createCartaoDao(conn);
+            if ("POST".equals(method) && parts.size() == 3) {
+                Cartao novo = gson.fromJson(readBody(exchange), Cartao.class);
+                validator.validate(novo).assertValid();
 
-                switch (method) {
-                    case "GET":
-                        List<Cartao> lista = dao.findCartaoByClienteId(clienteId);
-                        writeJson(ex, 200, gson.toJson(lista));
-                        break;
-
-                    case "POST":
-                        Cartao novo = gson.fromJson(readBody(ex), Cartao.class);
-                        dao.insert(novo, clienteId);
-                        writeJson(ex, 201, "{\"status\":\"criado\"}");
-                        break;
-
-                    case "DELETE":
-                        String tid = query.get("cartaoId");
-                        if (tid == null) {
-                            writeJson(ex, 400, "{\"error\":\"cartaoId is required for DELETE\"}");
-                            break;
-                        }
-                        int cartaoId = Integer.parseInt(tid);
-                        dao.deleteByid(cartaoId);
-                        writeJson(ex, 200, "{\"status\":\"removido\"}");
-                        break;
-
-                    default:
-                        ex.getResponseHeaders().add("Allow", "GET,POST,DELETE,OPTIONS");
-                        ex.sendResponseHeaders(405, -1);
+                if (!BandeiraValidator.isValid(novo.getBandeira().name())) {
+                    writeJson(exchange, 400,
+                            Map.of("error", "Bandeira inválida. Use uma das permitidas.")
+                    );
+                    return;
                 }
 
-            } catch (SQLException sq) {
-                errorJson(ex, 500, sq);
+                dao.insert(clienteId, novo);
+                writeJson(exchange, 201, Map.of("status", "criado"));
+                return;
             }
 
-        } catch (Exception e) {
-            errorJson(ex, 500, e);
-        }
-    }
+            if ("DELETE".equals(method) && parts.size() == 4) {
+                Integer cartaoId = parseIntOr400(parts.get(3), exchange);
+                if (cartaoId == null) return;
 
-    private Map<String,String> splitQuery(URI uri) {
-        Map<String,String> map = new HashMap<>();
-        String raw = uri.getQuery();
-        if (raw == null || raw.isEmpty()) return map;
-        for (String kv : raw.split("&")) {
-            String[] pair = kv.split("=", 2);
-            if (pair.length == 2) {
-                map.put(pair[0], pair[1]);
+                dao.deleteById(clienteId, cartaoId);
+                writeJson(exchange, 200, Map.of("status", "removido"));
+                return;
             }
-        }
-        return map;
-    }
 
-    private void errorJson(HttpExchange ex, int status, Exception e) throws IOException {
-        ex.getResponseHeaders().add("Access-Control-Allow-Origin", "*");
-        writeJson(ex, status, "{\"error\":\"" + e.getMessage() + "\"}");
+            if ("OPTIONS".equals(method)) {
+                exchange.getResponseHeaders().add("Access-Control-Allow-Methods",
+                        "GET,POST,DELETE,OPTIONS");
+                exchange.getResponseHeaders().add("Access-Control-Allow-Headers",
+                        "Content-Type");
+                exchange.sendResponseHeaders(204, -1);
+                return;
+            }
+
+            exchange.getResponseHeaders().set("Allow",
+                    "GET,POST,DELETE,OPTIONS");
+            exchange.sendResponseHeaders(405, -1);
+
+        } catch (SQLException e) {
+            writeJson(exchange, 500, Map.of("error", e.getMessage()));
+        }
     }
 }

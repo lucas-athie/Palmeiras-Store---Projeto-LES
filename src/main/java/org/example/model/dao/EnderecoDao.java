@@ -5,8 +5,12 @@ import org.example.model.entities.Endereco;
 import java.sql.SQLException;
 import java.util.List;
 
+
 public interface EnderecoDao {
-    void inserir(Endereco endereco, int idCliente) throws SQLException;
-    void deleteById(int id,int idCliente) throws SQLException;
-    List<Endereco> findEnderecoByClientId(int id) throws SQLException;
+
+    void insert(int clienteId, Endereco endereco) throws SQLException;
+
+    void deleteById(int clienteId, int enderecoId) throws SQLException;
+
+    List<Endereco> findByClienteId(int clienteId) throws SQLException;
 }

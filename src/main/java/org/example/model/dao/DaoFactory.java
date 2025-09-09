@@ -7,6 +7,8 @@ import org.example.model.dao.impl.EnderecoDaoJDBC;
 import java.sql.Connection;
 
 public class DaoFactory {
+
+
     public static ClienteDao createClienteDao(Connection conn) {
         return new ClienteDaoJDBC(conn);
     }

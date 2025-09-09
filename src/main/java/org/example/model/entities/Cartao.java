@@ -1,15 +1,23 @@
 package org.example.model.entities;
 
 public class Cartao {
-    private int idCartao;
-    private Boolean principal;
+    private int id;
+    private boolean principal;
     private String numero;
     private String titular;
     private Bandeira bandeira;
     private String codigoSeguranca;
 
-    public Cartao(Integer idCartao, Boolean principal, String numero, String titular, Bandeira bandeira, String codigoSeguranca) {
-        this.idCartao = idCartao;
+    public Cartao() {
+    }
+
+    public Cartao(int id,
+                  boolean principal,
+                  String numero,
+                  String titular,
+                  Bandeira bandeira,
+                  String codigoSeguranca) {
+        this.id = id;
         this.principal = principal;
         this.numero = numero;
         this.titular = titular;
@@ -18,22 +26,19 @@ public class Cartao {
     }
 
     public int getId() {
-        return idCartao;
+        return id;
     }
 
     public void setId(int id) {
-        this.idCartao = id;
+        this.id = id;
     }
 
-    public Boolean getPrincipal() {
+    public boolean isPrincipal() {
         return principal;
     }
 
-    public void setPrincipal(Boolean principal) {
+    public void setPrincipal(boolean principal) {
         this.principal = principal;
-    }
-
-    public Cartao() {
     }
 
     public String getNumero() {
@@ -60,11 +65,11 @@ public class Cartao {
         this.bandeira = bandeira;
     }
 
-    public void setCodigoSeguranca(String codigoSeguranca) {
-        this.codigoSeguranca = codigoSeguranca;
-    }
-
     public String getCodigoSeguranca() {
         return codigoSeguranca;
+    }
+
+    public void setCodigoSeguranca(String codigoSeguranca) {
+        this.codigoSeguranca = codigoSeguranca;
     }
 }

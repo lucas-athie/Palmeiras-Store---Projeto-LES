@@ -1,9 +1,14 @@
 package org.example.model.entities;
 
+import java.util.Objects;
+
 public class Telefone {
     private String numero;
     private String ddd;
     private TTelefone tipo;
+
+    public Telefone() {
+    }
 
     public Telefone(String numero, String ddd, TTelefone tipo) {
         this.numero = numero;
@@ -33,5 +38,25 @@ public class Telefone {
 
     public void setTipo(TTelefone tipo) {
         this.tipo = tipo;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Telefone)) return false;
+        Telefone that = (Telefone) o;
+        return Objects.equals(ddd, that.ddd) &&
+                Objects.equals(numero, that.numero) &&
+                tipo == that.tipo;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(ddd, numero, tipo);
+    }
+
+    @Override
+    public String toString() {
+        return "(" + ddd + ") " + numero + " [" + tipo + "]";
     }
 }

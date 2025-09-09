@@ -1,37 +1,62 @@
 package org.example.model.entities;
 
+import com.google.gson.annotations.SerializedName;
+import java.util.Objects;
+
 public class Endereco {
     private int idEndereco;
     private String apelido;
+
+    @SerializedName("tipoEndereco")
     private TEndereco tipoEndereco;
+
     private String cep;
     private String numero;
     private String bairro;
-    private TResidencia residencia;
-    private TLogradouro tLogradouro;
-    private Logradouro logradouro;
-    private Cidade cidade;
-    private Pais pais;
-    private Estado estado;
     private String observacoes;
 
-    public Endereco(int idEndereco, String apelido, TEndereco tipoEndereco, String cep, String numero, String bairro, String observacoes, TResidencia residencia, TLogradouro tLogradouro, Logradouro logradouro, Cidade cidade, Pais pais, Estado estado) {
-        this.idEndereco = idEndereco;
-        this.apelido = apelido;
-        this.tipoEndereco = tipoEndereco;
-        this.cep = cep;
-        this.numero = numero;
-        this.bairro = bairro;
-        this.observacoes = observacoes;
-        this.residencia = residencia;
-        this.tLogradouro = tLogradouro;
-        this.logradouro = logradouro;
-        this.cidade = cidade;
-        this.pais = pais;
-        this.estado = estado;
-    }
+    @SerializedName("tipoResidencia")
+    private TResidencia tipoResidencia;
+
+    @SerializedName("tipoLogradouro")
+    private TLogradouro tipoLogradouro;
+
+    private Logradouro logradouro;
+    private Cidade cidade;
+    private Estado estado;
+    private Pais pais;
 
     public Endereco() {
+    }
+
+    public Endereco(
+            int idEndereco,
+            String apelido,
+            TEndereco tipoEndereco,
+            String cep,
+            String numero,
+            String bairro,
+            String observacoes,
+            TResidencia tipoResidencia,
+            TLogradouro tipoLogradouro,
+            Logradouro logradouro,
+            Cidade cidade,
+            Estado estado,
+            Pais pais
+    ) {
+        this.idEndereco      = idEndereco;
+        this.apelido         = apelido;
+        this.tipoEndereco    = tipoEndereco;
+        this.cep             = cep;
+        this.numero          = numero;
+        this.bairro          = bairro;
+        this.observacoes     = observacoes;
+        this.tipoResidencia  = tipoResidencia;
+        this.tipoLogradouro  = tipoLogradouro;
+        this.logradouro      = logradouro;
+        this.cidade          = cidade;
+        this.estado          = estado;
+        this.pais            = pais;
     }
 
     public int getIdEndereco() {
@@ -53,6 +78,7 @@ public class Endereco {
     public TEndereco getTipoEndereco() {
         return tipoEndereco;
     }
+
     public void setTipoEndereco(TEndereco tipoEndereco) {
         this.tipoEndereco = tipoEndereco;
     }
@@ -81,20 +107,28 @@ public class Endereco {
         this.bairro = bairro;
     }
 
-    public TResidencia getResidencia() {
-        return residencia;
+    public String getObservacoes() {
+        return observacoes;
     }
 
-    public void setResidencia(TResidencia residencia) {
-        this.residencia = residencia;
+    public void setObservacoes(String observacoes) {
+        this.observacoes = observacoes;
     }
 
-    public TLogradouro gettLogradouro() {
-        return tLogradouro;
+    public TResidencia getTipoResidencia() {
+        return tipoResidencia;
     }
 
-    public void settLogradouro(TLogradouro tLogradouro) {
-        this.tLogradouro = tLogradouro;
+    public void setTipoResidencia(TResidencia tipoResidencia) {
+        this.tipoResidencia = tipoResidencia;
+    }
+
+    public TLogradouro getTipoLogradouro() {
+        return tipoLogradouro;
+    }
+
+    public void setTipoLogradouro(TLogradouro tipoLogradouro) {
+        this.tipoLogradouro = tipoLogradouro;
     }
 
     public Logradouro getLogradouro() {
@@ -113,14 +147,6 @@ public class Endereco {
         this.cidade = cidade;
     }
 
-    public Pais getPais() {
-        return pais;
-    }
-
-    public void setPais(Pais pais) {
-        this.pais = pais;
-    }
-
     public Estado getEstado() {
         return estado;
     }
@@ -129,11 +155,43 @@ public class Endereco {
         this.estado = estado;
     }
 
-    public String getObservacoes() {
-        return observacoes;
+    public Pais getPais() {
+        return pais;
     }
 
-    public void setObservacoes(String observacoes) {
-        this.observacoes = observacoes;
+    public void setPais(Pais pais) {
+        this.pais = pais;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (!(o instanceof Endereco)) return false;
+        Endereco that = (Endereco) o;
+        return idEndereco == that.idEndereco;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(idEndereco);
+    }
+
+    @Override
+    public String toString() {
+        return "Endereco{" +
+                "idEndereco=" + idEndereco +
+                ", apelido='" + apelido + '\'' +
+                ", tipoEndereco=" + tipoEndereco +
+                ", cep='" + cep + '\'' +
+                ", numero='" + numero + '\'' +
+                ", bairro='" + bairro + '\'' +
+                ", observacoes='" + observacoes + '\'' +
+                ", tipoResidencia=" + tipoResidencia +
+                ", tipoLogradouro=" + tipoLogradouro +
+                ", logradouro=" + logradouro +
+                ", cidade=" + cidade +
+                ", estado=" + estado +
+                ", pais=" + pais +
+                '}';
     }
 }
